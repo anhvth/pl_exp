@@ -87,12 +87,9 @@ class ClipModelClassifier(BaseClassifier):
         return logits, features
 
 
-def model_factory(model_name, num_classses)->BaseClassifier:
+def model_factory(model_name, num_classses, pretrained=True)->BaseClassifier:
     logger.info("Init model {}".format(model_name))
-    if timm.is_model_pretrained(model_name):
-        classifer = TimmModelClassifier(model_name, num_classses)
-    else:
-        raise NotImplementedError
+    classifer = TimmModelClassifier(model_name, num_classses, pretrained=True)
     return classifer
 
 def test():

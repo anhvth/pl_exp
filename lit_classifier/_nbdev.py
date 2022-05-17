@@ -8,11 +8,16 @@ index = {"BaseClassifier": "00_base_model.ipynb",
          "model_factory": "00_base_model.ipynb",
          "test": "00_base_model.ipynb",
          "LitModel": "01_lit_model.ipynb",
-         "get_trainer": "01_lit_model.ipynb",
-         "DEFAULT_HPARAMS": "01_lit_model.ipynb"}
+         "DEFAULT_HPARAMS": "01_lit_model.ipynb",
+         "reduce_loss": "02_loss.ipynb",
+         "weight_reduce_loss": "02_loss.ipynb",
+         "py_sigmoid_focal_loss": "02_loss.ipynb",
+         "sigmoid_focal_loss": "02_loss.ipynb",
+         "FocalLoss": "02_loss.ipynb"}
 
 modules = ["base_model.py",
-           "lit_model.py"]
+           "lit_model.py",
+           "loss.py"]
 
 doc_url = "https://anhvth.github.io/lit_classifier/"
 
