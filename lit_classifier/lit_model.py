@@ -11,7 +11,7 @@ from pytorch_lightning.loggers import TensorBoardLogger
 import os
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
-
+from .loss import FocalLoss
 import os.path as osp
 
 # Cell
@@ -102,4 +102,3 @@ class LitModel(LightningModule):
         self.log("training_loss", loss, prog_bar=True, rank_zero_only=True)
         self.log("training_accuracy", accs, prog_bar=True, rank_zero_only=True)
         return loss
-
