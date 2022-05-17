@@ -2,9 +2,17 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {}
+index = {"BaseClassifier": "00_base_model.ipynb",
+         "TimmModelClassifier": "00_base_model.ipynb",
+         "ClipModelClassifier": "00_base_model.ipynb",
+         "model_factory": "00_base_model.ipynb",
+         "test": "00_base_model.ipynb",
+         "LitModel": "01_lit_model.ipynb",
+         "get_trainer": "01_lit_model.ipynb",
+         "DEFAULT_HPARAMS": "01_lit_model.ipynb"}
 
-modules = []
+modules = ["base_model.py",
+           "lit_model.py"]
 
 doc_url = "https://anhvth.github.io/lit_classifier/"
 
