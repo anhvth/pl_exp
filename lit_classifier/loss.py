@@ -233,4 +233,3 @@ class FocalLoss(nn.Module):
         else:
             raise NotImplementedError
         return loss_cls
-
