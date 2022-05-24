@@ -111,7 +111,7 @@ class LitModel(LightningModule):
 # Cell
 def get_trainer(exp_name, gpus=1, max_epochs=40, distributed=False,
         monitor=dict(metric="val_acc", mode="max"), save_every_n_epochs=1, save_top_k=5,
-    ):
+    **trainer_kawrgs):
 
 
     now = datetime.now() + timedelta(hours=7)
@@ -141,6 +141,6 @@ def get_trainer(exp_name, gpus=1, max_epochs=40, distributed=False,
         max_epochs=max_epochs,
         strategy= "dp" if not distributed else "ddp",
         callbacks=[callback_ckpt, callback_tqdm, callback_lrmornitor],
-        logger=plt_logger,
+        logger=plt_logger,**trainer_kawrgs,
     )
     return trainer
