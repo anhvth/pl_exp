@@ -3,6 +3,11 @@
 __all__ = ['LitModel', 'DEFAULT_HPARAMS', 'get_trainer']
 
 # Cell
+import timm
+
+
+
+#export
 from pytorch_lightning.core.lightning import LightningModule
 import torch
 from datetime import datetime, timedelta
@@ -78,7 +83,7 @@ class LitModel(LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch[:2]
         logits = self(x)
-        loss = self.loss_fn(logits, y.view(len(logits),))
+        loss = self.loss_fn(logits, y)
 
         preds = logits.sigmoid().argmax(1)
         accs = (y == preds).float().mean()
@@ -94,7 +99,7 @@ class LitModel(LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch[:2]
         logits = self(x)
-        loss = self.loss_fn(logits, y.view(len(logits),))
+        loss = self.loss_fn(logits, y)
 
         preds = logits.sigmoid().argmax(1)
         accs = (y == preds).float().mean()
@@ -112,7 +117,7 @@ def get_trainer(exp_name, gpus=1, max_epochs=40, distributed=False,
     now = datetime.now() + timedelta(hours=7)
     root_log_dir = osp.join(
             "lightning_logs", exp_name, now.strftime(
-                "%b%d-%H:%M:%S")
+                "%b%d_%H_%M_%S")
         )
     filename="{epoch}-{"+monitor["metric"]+":.2f}"
 
@@ -128,7 +133,7 @@ def get_trainer(exp_name, gpus=1, max_epochs=40, distributed=False,
     callback_tqdm = TQDMProgressBar(refresh_rate=5)
     callback_lrmornitor = LearningRateMonitor(logging_interval="step")
     plt_logger = TensorBoardLogger(
-        osp.join(root_log_dir, "tb_logs"), version=now.strftime("%b%d-%H:%M:%S")
+        osp.join(root_log_dir, "tb_logs"), version=now.strftime("%b%d_%H_%M_%S")
     )
 
     trainer = Trainer(

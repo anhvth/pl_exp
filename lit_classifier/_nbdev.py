@@ -14,7 +14,8 @@ index = {"BaseClassifier": "00_base_model.ipynb",
          "weight_reduce_loss": "02_loss.ipynb",
          "py_sigmoid_focal_loss": "02_loss.ipynb",
          "sigmoid_focal_loss": "02_loss.ipynb",
-         "FocalLoss": "02_loss.ipynb"}
+         "FocalLoss": "02_loss.ipynb",
+         "BinaryFocalLoss": "02_loss.ipynb"}
 
 modules = ["base_model.py",
            "lit_model.py",
