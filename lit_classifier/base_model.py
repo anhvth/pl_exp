@@ -50,11 +50,14 @@ class TimmModelClassifier(BaseClassifier):
     def extract_features(self, imgs):
         return self.base_model.forward_features(imgs)
 
-    def forward(self, x):
+    def forward(self, x, return_features=False):
         features = self.extract_features(x)
         features = self.global_pool(features)
         logits = self.classifier(features)
-        return logits, features
+        if return_features:
+            return logits, features
+        else:
+            return logits
 
 
 class ClipModelClassifier(BaseClassifier):
