@@ -2,7 +2,8 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"BaseClassifier": "00_base_model.ipynb",
+index = {"__all__": "00_all.ipynb",
+         "BaseClassifier": "00_base_model.ipynb",
          "TimmModelClassifier": "00_base_model.ipynb",
          "ClipModelClassifier": "00_base_model.ipynb",
          "model_factory": "00_base_model.ipynb",
@@ -11,6 +12,7 @@ index = {"BaseClassifier": "00_base_model.ipynb",
          "LitModel": "01_lit_model.ipynb",
          "BinLitModel": "01_lit_model.ipynb",
          "PLitModel": "01_lit_model.ipynb",
+         "load_lit_state_dict": "01_lit_model.ipynb",
          "get_trainer": "01_lit_model.ipynb",
          "reduce_loss": "02_loss.ipynb",
          "weight_reduce_loss": "02_loss.ipynb",
