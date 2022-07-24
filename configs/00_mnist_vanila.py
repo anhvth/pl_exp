@@ -40,6 +40,7 @@ class MyLitModel(pl.LightningModule):
 
     def configure_optimizers(self):
         if self.optim_cfg is None:
+            import ipdb; ipdb.set_trace()
             logger.warning('Please add optim cfg and re-init this object')
 
         if self.optim_cfg['optim'] == 'Adam':
@@ -152,35 +153,35 @@ class DataModule(pl.LightningDataModule):
 
     def setup(self, stage):
         from torchvision.datasets import MNIST
-        self.mnist_test = MNIST(self.data_dir,
+        self.ds_test = MNIST(self.data_dir,
                                 train=False,
                                 transform=self.train_transform)
-        self.mnist_predict = MNIST(self.data_dir,
+        self.ds_predict = MNIST(self.data_dir,
                                    train=False,
                                    transform=self.train_transform)
-        mnist_full = MNIST(self.data_dir,
+        ds_full = MNIST(self.data_dir,
                            train=True,
                            transform=self.train_transform)
-        self.mnist_train, self.mnist_val = random_split(
-            mnist_full, [55000, 5000])
+        self.ds_train, self.ds_val = random_split(
+            ds_full, [55000, 5000])
 
     def train_dataloader(self):
-        return DataLoader(self.mnist_train,
+        return DataLoader(self.ds_train,
                           batch_size=self.batch_size,
                           num_workers=self.num_workers)
 
     def val_dataloader(self):
-        return DataLoader(self.mnist_val,
+        return DataLoader(self.ds_val,
                           batch_size=self.batch_size,
                           num_workers=self.num_workers)
 
     def test_dataloader(self):
-        return DataLoader(self.mnist_test,
+        return DataLoader(self.ds_test,
                           batch_size=self.batch_size,
                           num_workers=self.num_workers)
 
     def predict_dataloader(self):
-        return DataLoader(self.mnist_predict,
+        return DataLoader(self.ds_predict,
                           batch_size=self.batch_size,
                           num_workers=self.num_workers)
 
