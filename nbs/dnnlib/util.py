@@ -475,3 +475,5 @@ def open_url(url: str, cache_dir: str = None, num_attempts: int = 10, verbose: b
     # Return data as file object.
     assert not return_filename
     return io.BytesIO(url_data)
+
+
