@@ -1,0 +1,8 @@
+website:
+  sidebar:
+    contents:
+      - 00_all.ipynb
+      - 00_base_model.ipynb
+      - 01_lit_model.ipynb
+      - 02_loss.ipynb
+      - 03_persistance.ipynb
