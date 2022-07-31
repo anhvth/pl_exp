@@ -7,10 +7,6 @@ LitClassifier
 #hide
 ```
 
-## Install
-
-`pip install -e ./`
-
 ## How to use
 
 ``` bash
