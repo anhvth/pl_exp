@@ -20,12 +20,7 @@ class BaseExp(metaclass=ABCMeta):
     """Basic class for any experiment."""
 
     def __init__(self):
-        self.seed = None
-        self.output_dir = "./YOLOX_outputs"
-        self.print_interval = 100
-        self.eval_interval = 10
-        self.max_epochs = 20
-
+        pass
     @abstractmethod
     def get_model(self) -> Module:
         pass
