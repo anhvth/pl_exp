@@ -75,7 +75,7 @@ class Exp(BaseExp):
         super().__init__()
         self.lr = 0.15
         self.batch_size = 128
-        self.num_lr_schedule_cycles = 3
+        self.num_lr_cycles = 3
 
 
     def get_optimizer(self):
@@ -94,7 +94,7 @@ class Exp(BaseExp):
             create_schedule_fn = fn_schedule_cosine_with_warmpup_decay_timm(
                 num_epochs=self.max_epochs,
                 num_steps_per_epoch=len(train_loader),
-                num_epochs_per_cycle=self.max_epochs//self.num_lr_schedule_cycles
+                num_epochs_per_cycle=self.max_epochs//self.num_lr_cycles
             )
         elif schedule_type == 'linear':
             create_schedule_fn = fn_schedule_linear_with_warmup(

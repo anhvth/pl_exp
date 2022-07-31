@@ -6,7 +6,7 @@ import mmcv
 import torch
 from pytorch_lightning import Trainer, seed_everything
 from lit_classifier.all import get_trainer
-
+import shutil
 
 def get_exp_by_file(exp_file):
     """
@@ -40,6 +40,10 @@ def main(params):
                           params.devices,
                           distributed=params.devices > 1,
                           max_epochs=cfg.max_epochs)
+
+    # import ipdb; ipdb.set_trace()
+    mmcv.mkdir_or_exist(trainer.log_dir)
+    shutil.copy(params.cfg, osp.join(trainer.log_dir, osp.basename(params.cfg)))
     if params.verbose:
         print(params.pretty_text)
     trainer.fit(model, data)
