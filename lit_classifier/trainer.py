@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['get_exp_by_file', 'train']
 
-# %% ../nbs/05_trainer.ipynb 3
+# %% ../nbs/05_trainer.ipynb 2
 import os
 import os.path as osp
 from argparse import ArgumentParser
@@ -13,11 +13,11 @@ from pytorch_lightning import Trainer, seed_everything
 from .all import get_trainer
 import shutil
 from fastcore.script import *
-
+"""
+    Copy from https://github.com/Megvii-BaseDetection/YOLOX/blob/a5bb5ab12a61b8a25a5c3c11ae6f06397eb9b296/yolox/exp/build.py
+"""
 def get_exp_by_file(exp_file):
-    """
-        Copy from https://github.com/Megvii-BaseDetection/YOLOX/blob/a5bb5ab12a61b8a25a5c3c11ae6f06397eb9b296/yolox/exp/build.py
-    """
+
     try:
         import importlib
         import os
@@ -51,7 +51,6 @@ def train(
                           distributed=devices > 1,
                           max_epochs=cfg.max_epochs)
 
-    # import ipdb; ipdb.set_trace()
     mmcv.mkdir_or_exist(trainer.log_dir)
     shutil.copy(cfg_path, osp.join(trainer.log_dir, osp.basename(cfg_path)))
     trainer.fit(model, data)

@@ -1,0 +1,65 @@
+[
+  {
+    "objectID": "04_base_exp.html",
+    "href": "04_base_exp.html",
+    "title": "Base_exp",
+    "section": "",
+    "text": "BaseExp ()\n\nBasic class for any experiment."
+  },
+  {
+    "objectID": "loss.html",
+    "href": "loss.html",
+    "title": "Losses",
+    "section": "",
+    "text": "BinaryFocalLoss\n\n\n\n\nBinaryFocalLoss\n\n BinaryFocalLoss (alpha=0.25, gamma=2, logits=True, reduce=True)\n\nBase class for all neural network modules."
+  },
+  {
+    "objectID": "all.html",
+    "href": "all.html",
+    "title": "ALL",
+    "section": "",
+    "text": "!nbdev_export"
+  },
+  {
+    "objectID": "03_persistance.html",
+    "href": "03_persistance.html",
+    "title": "lit_classifier",
+    "section": "",
+    "text": "open_url (url:str, cache_dir:str=None, num_attempts:int=10,\n           verbose:bool=True, return_filename:bool=False, cache:bool=True)\n\nDownload the given URL and return a binary-mode file object to access the data.\n\n\n\n\n\n\n\n\n\n is_url (obj:Any, allow_file_urls:bool=False)\n\nDetermine whether the given object is a valid URL string.\n\n\n\n\n\n\n\n\n\n copy_files_and_create_dirs (files:List[Tuple[str,str]])\n\nTakes in a list of tuples of (src, dst) paths and copies files.\n\n\n\n\n\n\n\n\n\n list_dir_recursively_with_ignore (dir_path:str, ignores:List[str]=None,\n                                   add_base_to_relative:bool=False)\n\nList all files recursively in a given directory while ignoring given file and directory names.\n\n\n\n\n\n\n\n\n\n get_top_level_function_name (obj:Any)\n\nReturn the fully-qualified name of a top-level function.\n\n\n\n\n\n\n\n\n\n is_top_level_function (obj:Any)\n\nDetermine whether the given object is a top-level function, i.e., defined at module scope using ‘def’.\n\n\n\n\n\n\n\n\n\n get_module_dir_by_obj_name (obj_name:str)\n\nGet the directory path of the module containing the given object name.\n\n\n\n\n\n\n\n\n\n construct_class_by_name (*args, class_name:str=None, **kwargs)\n\nFinds the python class with the given name and constructs it with the given arguments.\n\n\n\n\n\n\n\n\n\n call_func_by_name (*args, func_name:str=None, **kwargs)\n\nFinds the python object with the given name and calls it as a function.\n\n\n\n\n\n\n\n\n\n get_obj_by_name (name:str)\n\nFinds the python object with the given name.\n\n\n\n\n\n\n\n\n\n get_obj_from_module (module:module, obj_name:str)\n\nTraverses the object name and returns the last (rightmost) python object.\n\n\n\n\n\n\n\n\n\n get_module_from_obj_name (obj_name:str)\n\nSearches for the underlying module behind the name to some python object.\n\n\n\n\n\n\n\n\n\n is_pickleable (obj:Any)\n\n\n\n\n\n\n\n\n\n\n get_dtype_and_ctype (type_obj:Any)\n\nGiven a type name string (or an object having a name attribute), return matching Numpy and ctypes types that have the same size in bytes.\n\n\n\n\n\n\n\n\n\n tuple_product (t:Tuple)\n\nCalculate the product of the tuple elements.\n\n\n\n\n\n\n\n\n\n ask_yes_no (question:str)\n\nAsk the user the question until the user inputs a valid answer.\n\n\n\n\n\n\n\n\n\n format_time (seconds:Union[int,float])\n\nConvert the seconds to human readable string with days, hours, minutes and seconds.\n\n\n\n\n\n\n\n\n\n make_cache_dir_path (*paths:str)\n\n\n\n\n\n\n\n\n\n\n set_cache_dir (path:str)\n\n\n\n\n\n\n\n\n\n\n Logger (file_name:str=None, file_mode:str='w', should_flush:bool=True)\n\nRedirect stderr to stdout, optionally print stdout to a file, and optionally force flushing on both stdout and the file.\n\n\n\n\n\n\n\n\nConvenience class that behaves like a dict but allows access with the attribute syntax.\n\n\n\n\n\n\n\n\n\n import_hook (hook)\n\nRegister an import hook that is called whenever a persistent object\n\n\n\n\n\n\n\n\n\n is_persistent (obj)\n\nTest whether the given object or class is persistent, i.e.,\n\n\n\n\n\n\n\n\n\n persistent_class (orig_class)\n\nClass decorator that extends a given class to save its source code\n\n\n\n\n!nbdev_build_lib\n\nConverted 00_base_model.ipynb.\nConverted 01_lit_model.ipynb.\nConverted 02_loss.ipynb.\nConverted 03_persistance.ipynb.\nConverted init.ipynb."
+  },
+  {
+    "objectID": "01_lit_model.html#schedulers",
+    "href": "01_lit_model.html#schedulers",
+    "title": "LitModel",
+    "section": "Schedulers",
+    "text": "Schedulers\n\n\n\n\nget_scheduler\n\n get_scheduler (optimizer, lr_schedule_fn, interval='step', verbose=False)\n\n\n\n\n\n\n\n\nfn_schedule_cosine_with_warmpup_decay_timm\n\n fn_schedule_cosine_with_warmpup_decay_timm (num_epochs,\n                                             num_steps_per_epoch,\n                                             num_epochs_per_cycle,\n                                             num_warmup_epochs=1,\n                                             init_lr=0.4, min_lr=0.1,\n                                             cycle_decay=0.8,\n                                             interval='step')\n\n\n\n\n\n\n\n\nfn_schedule_linear_with_warmup\n\n fn_schedule_linear_with_warmup (num_epochs, num_steps_per_epoch,\n                                 num_warmup_steps=0, init_lr=0.4,\n                                 min_lr=0.1)\n\n\n\n\n\n\n\n\nplot_lr_step_schedule\n\n plot_lr_step_schedule (fn, lr, num_epochs, num_steps_per_epoch)\n\n\n\n\n\nfn = fn_schedule_cosine_with_warmpup_decay_timm(100, 10, 30, 3)\nplot_lr_step_schedule(fn, 0.1, 100, 10)\n\n2022-07-31 13:23:56.651 | INFO     | __main__:fn_schedule_cosine_with_warmpup_decay_timm:52 - num_cycles=3\n\n\nmin(lrs)=0.01000, max(lrs)=0.09800\n\n\n\n\n\n\n# get_scheduler()"
+  },
+  {
+    "objectID": "01_lit_model.html#litmodel",
+    "href": "01_lit_model.html#litmodel",
+    "title": "LitModel",
+    "section": "LitModel",
+    "text": "LitModel\n\nfn_schedule_cosine_with_warmpup_decay_timm?\n\n\nSignature:\nfn_schedule_cosine_with_warmpup_decay_timm(\n    num_epochs,\n    num_steps_per_epoch,\n    num_epochs_per_cycle,\n    num_warmup_epochs=1,\n    init_lr=0.4,\n    min_lr=0.1,\n    cycle_decay=0.8,\n    interval='step',\n)\nDocstring: <no docstring>\nFile:      /tmp/ipykernel_19628/1125565782.py\nType:      function\n\n\n\n\n\n\n\n\nLitModel\n\n LitModel (model, create_optimizer_fn=None, create_lr_scheduler_fn=None,\n           loss_fn=CrossEntropyLoss())\n\nHooks to be used in LightningModule.\n\n\n\n\n\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\nmodel\n\n\n\n\n\ncreate_optimizer_fn\nNoneType\nNone\nlr_schdule_cfg=dict(type=‘cosine’, train_loader=None),\n\n\ncreate_lr_scheduler_fn\nNoneType\nNone\n\n\n\nloss_fn\nCrossEntropyLoss\nCrossEntropyLoss()"
+  },
+  {
+    "objectID": "01_lit_model.html#get-trainer",
+    "href": "01_lit_model.html#get-trainer",
+    "title": "LitModel",
+    "section": "Get trainer",
+    "text": "Get trainer\n\n\n\n\nget_trainer\n\n get_trainer (exp_name, gpus=1, max_epochs=None, distributed=False,\n              monitor={'metric':'val_acc','mode':'max'},\n              save_every_n_epochs=1, save_top_k=1, use_version=True,\n              trainer_kwargs={})"
+  },
+  {
+    "objectID": "trainer.html",
+    "href": "trainer.html",
+    "title": "Trainer",
+    "section": "",
+    "text": "train (cfg_path:<Pathtoconfig>, devices:int<GPUSindices>)"
+  },
+  {
+    "objectID": "trainer.html#test",
+    "href": "trainer.html#test",
+    "title": "Trainer",
+    "section": "Test",
+    "text": "Test"
+  }
+]

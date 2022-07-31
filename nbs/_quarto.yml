@@ -15,7 +15,7 @@ format:
 
 website:
   title: "lit_classifier"
-  description: ""Wraper for pytorch lighining classification""
+  description: "Wraper for pytorch lighining classification"
   execute: 
     enabled: false
   twitter-card: true
