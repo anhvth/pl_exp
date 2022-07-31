@@ -10,4 +10,4 @@ website:
       - 05_trainer.ipynb
       - section: docs
         contents:
-          - docs/index.html
+          - docs/README.md

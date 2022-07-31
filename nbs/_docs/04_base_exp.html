@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>ple – contributing</title>
+<title>ple - Base_exp</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -56,6 +56,10 @@ ul.task-list{list-style: none;}
 
 
 <link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="ple - Base_exp">
+<meta property="og:site-name" content="ple">
+<meta name="twitter:title" content="ple - Base_exp">
+<meta name="twitter:card" content="summary">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -91,7 +95,7 @@ ul.task-list{list-style: none;}
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">(Untitled)</h1>
+      <h1 class="quarto-secondary-nav-title">Base_exp</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -106,62 +110,47 @@ ul.task-list{list-style: none;}
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">Project name here</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">LitClassifier</a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./core.html" class="sidebar-item-text sidebar-link">module name here</a>
+  <a href="./all.html" class="sidebar-item-text sidebar-link">ALL</a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./CONTRIBUTING.html" class="sidebar-item-text sidebar-link active">How to contribute</a>
+  <a href="./01_lit_model.html" class="sidebar-item-text sidebar-link">LitModel</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./loss.html" class="sidebar-item-text sidebar-link">Losses</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_persistance.html" class="sidebar-item-text sidebar-link">Persistance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_base_exp.html" class="sidebar-item-text sidebar-link active">Base_exp</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./trainer.html" class="sidebar-item-text sidebar-link">Trainer</a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">nbs</a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">docs</a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nbs/index.html" class="sidebar-item-text sidebar-link">LitClassifier</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nbs/all.html" class="sidebar-item-text sidebar-link">ALL</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nbs/01_lit_model.html" class="sidebar-item-text sidebar-link">LitModel</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nbs/loss.html" class="sidebar-item-text sidebar-link">Losses</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nbs/03_persistance.html" class="sidebar-item-text sidebar-link">Persistance</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nbs/04_base_exp.html" class="sidebar-item-text sidebar-link">Base_exp</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nbs/trainer.html" class="sidebar-item-text sidebar-link">Trainer</a>
-  </div>
-</li>
       </ul>
   </li>
     </ul>
@@ -169,67 +158,42 @@ ul.task-list{list-style: none;}
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#how-to-contribute" id="toc-how-to-contribute" class="nav-link active" data-scroll-target="#how-to-contribute">How to contribute</a>
-  <ul class="collapse">
-  <li><a href="#how-to-get-started" id="toc-how-to-get-started" class="nav-link" data-scroll-target="#how-to-get-started">How to get started</a></li>
-  <li><a href="#did-you-find-a-bug" id="toc-did-you-find-a-bug" class="nav-link" data-scroll-target="#did-you-find-a-bug">Did you find a bug?</a></li>
-  <li><a href="#pr-submission-guidelines" id="toc-pr-submission-guidelines" class="nav-link" data-scroll-target="#pr-submission-guidelines">PR submission guidelines</a></li>
-  <li><a href="#do-you-want-to-contribute-to-the-documentation" id="toc-do-you-want-to-contribute-to-the-documentation" class="nav-link" data-scroll-target="#do-you-want-to-contribute-to-the-documentation">Do you want to contribute to the documentation?</a></li>
-  </ul></li>
-  </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/anhvth/pl_exp/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Base_exp</h1>
+</div>
 
 
-<section id="how-to-contribute" class="level1">
-<h1>How to contribute</h1>
-<section id="how-to-get-started" class="level2">
-<h2 class="anchored" data-anchor-id="how-to-get-started">How to get started</h2>
-<p>Before anything else, please install the git hooks that run automatic scripts during each commit and merge to strip the notebooks of superfluous metadata (and avoid merge conflicts). After cloning the repository, run the following command inside it:</p>
-<pre><code>nbdev_install_git_hooks</code></pre>
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<hr>
+<section id="baseexp" class="level3">
+<h3 class="anchored" data-anchor-id="baseexp">BaseExp</h3>
+<blockquote class="blockquote">
+<pre><code> BaseExp ()</code></pre>
+</blockquote>
+<p>Basic class for any experiment.</p>
 </section>
-<section id="did-you-find-a-bug" class="level2">
-<h2 class="anchored" data-anchor-id="did-you-find-a-bug">Did you find a bug?</h2>
-<ul>
-<li>Ensure the bug was not already reported by searching on GitHub under Issues.</li>
-<li>If you’re unable to find an open issue addressing the problem, open a new one. Be sure to include a title and clear description, as much relevant information as possible, and a code sample or an executable test case demonstrating the expected behavior that is not occurring.</li>
-<li>Be sure to add the complete error messages.</li>
-</ul>
-<section id="did-you-write-a-patch-that-fixes-a-bug" class="level4">
-<h4 class="anchored" data-anchor-id="did-you-write-a-patch-that-fixes-a-bug">Did you write a patch that fixes a bug?</h4>
-<ul>
-<li>Open a new GitHub pull request with the patch.</li>
-<li>Ensure that your PR includes a test that fails without your patch, and pass with it.</li>
-<li>Ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.</li>
-</ul>
-</section>
-</section>
-<section id="pr-submission-guidelines" class="level2">
-<h2 class="anchored" data-anchor-id="pr-submission-guidelines">PR submission guidelines</h2>
-<ul>
-<li>Keep each PR focused. While it’s more convenient, do not combine several unrelated fixes together. Create as many branches as needing to keep each PR focused.</li>
-<li>Do not mix style changes/fixes with “functional” changes. It’s very difficult to review such PRs and it most likely get rejected.</li>
-<li>Do not add/remove vertical whitespace. Preserve the original style of the file you edit as much as you can.</li>
-<li>Do not turn an already submitted PR into your development playground. If after you submitted PR, you discovered that more work is needed - close the PR, do the required work and then submit a new PR. Otherwise each of your commits requires attention from maintainers of the project.</li>
-<li>If, however, you submitted a PR and received a request for changes, you should proceed with commits inside that PR, so that the maintainer can see the incremental fixes and won’t need to review the whole PR again. In the exception case where you realize it’ll take many many commits to complete the requests, then it’s probably best to close the PR, do the work and then submit it again. Use common sense where you’d choose one way over another.</li>
-</ul>
-</section>
-<section id="do-you-want-to-contribute-to-the-documentation" class="level2">
-<h2 class="anchored" data-anchor-id="do-you-want-to-contribute-to-the-documentation">Do you want to contribute to the documentation?</h2>
-<ul>
-<li>Docs are automatically created from the notebooks in the nbs folder.</li>
-</ul>
+</div>
+</div>
 
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
