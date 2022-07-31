@@ -13,11 +13,14 @@ from pytorch_lightning import Trainer, seed_everything
 from .all import get_trainer
 import shutil
 from fastcore.script import *
-"""
-    Copy from https://github.com/Megvii-BaseDetection/YOLOX/blob/a5bb5ab12a61b8a25a5c3c11ae6f06397eb9b296/yolox/exp/build.py
-"""
-def get_exp_by_file(exp_file):
 
+
+def get_exp_by_file(exp_file):
+    """
+        Params:
+        exp_file: Path to exp
+        
+    """
     try:
         import importlib
         import os
