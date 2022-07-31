@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Trainer API">
 
-<title>lit_classifier - Trainer</title>
+<title>lit_classifier - Base_exp</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,11 +56,9 @@ ul.task-list{list-style: none;}
 
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="lit_classifier - Trainer">
-<meta property="og:description" content="Trainer API">
+<meta property="og:title" content="lit_classifier - Base_exp">
 <meta property="og:site-name" content="lit_classifier">
-<meta name="twitter:title" content="lit_classifier - Trainer">
-<meta name="twitter:description" content="Trainer API">
+<meta name="twitter:title" content="lit_classifier - Base_exp">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -98,7 +95,7 @@ ul.task-list{list-style: none;}
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">Trainer</h1>
+      <h1 class="quarto-secondary-nav-title">Base_exp</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -111,6 +108,11 @@ ul.task-list{list-style: none;}
   <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">LitClassifier</a>
+  </div>
+</li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./all.html" class="sidebar-item-text sidebar-link">ALL</a>
@@ -133,12 +135,12 @@ ul.task-list{list-style: none;}
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_base_exp.html" class="sidebar-item-text sidebar-link">Base_exp</a>
+  <a href="./04_base_exp.html" class="sidebar-item-text sidebar-link active">Base_exp</a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./trainer.html" class="sidebar-item-text sidebar-link active">Trainer</a>
+  <a href="./trainer.html" class="sidebar-item-text sidebar-link">Trainer</a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -177,27 +179,16 @@ ul.task-list{list-style: none;}
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#test" id="toc-test" class="nav-link active" data-scroll-target="#test">Test</a></li>
-  </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/anhvth/lit_classifier/tree/main/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">Trainer</h1>
+<h1 class="title d-none d-lg-block">Base_exp</h1>
 </div>
 
-<div>
-  <div class="description">
-    Trainer API
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
@@ -213,31 +204,17 @@ ul.task-list{list-style: none;}
 <div class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
 <hr>
-<section id="train" class="level4">
-<h4 class="anchored" data-anchor-id="train">train</h4>
+<section id="baseexp" class="level3">
+<h3 class="anchored" data-anchor-id="baseexp">BaseExp</h3>
 <blockquote class="blockquote">
-<pre><code> train (cfg_path:&lt;Pathtoconfig&gt;, devices:int&lt;GPUSindices&gt;)</code></pre>
+<pre><code> BaseExp ()</code></pre>
 </blockquote>
+<p>Basic class for any experiment.</p>
 </section>
 </div>
 </div>
-<div class="cell" data-execution_count="2">
-<div class="cell-output cell-output-display" data-execution_count="2">
-<hr>
-<section id="get_exp_by_file" class="level4">
-<h4 class="anchored" data-anchor-id="get_exp_by_file">get_exp_by_file</h4>
-<blockquote class="blockquote">
-<pre><code> get_exp_by_file (exp_file)</code></pre>
-</blockquote>
-<p>Params:</p>
-</section>
-</div>
-</div>
-<section id="test" class="level2">
-<h2 class="anchored" data-anchor-id="test">Test</h2>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

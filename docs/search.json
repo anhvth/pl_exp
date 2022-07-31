@@ -28,6 +28,27 @@
     "text": "open_url (url:str, cache_dir:str=None, num_attempts:int=10,\n           verbose:bool=True, return_filename:bool=False, cache:bool=True)\n\nDownload the given URL and return a binary-mode file object to access the data.\n\n\n\n\n\n\n\n\n\n is_url (obj:Any, allow_file_urls:bool=False)\n\nDetermine whether the given object is a valid URL string.\n\n\n\n\n\n\n\n\n\n copy_files_and_create_dirs (files:List[Tuple[str,str]])\n\nTakes in a list of tuples of (src, dst) paths and copies files.\n\n\n\n\n\n\n\n\n\n list_dir_recursively_with_ignore (dir_path:str, ignores:List[str]=None,\n                                   add_base_to_relative:bool=False)\n\nList all files recursively in a given directory while ignoring given file and directory names.\n\n\n\n\n\n\n\n\n\n get_top_level_function_name (obj:Any)\n\nReturn the fully-qualified name of a top-level function.\n\n\n\n\n\n\n\n\n\n is_top_level_function (obj:Any)\n\nDetermine whether the given object is a top-level function, i.e., defined at module scope using ‘def’.\n\n\n\n\n\n\n\n\n\n get_module_dir_by_obj_name (obj_name:str)\n\nGet the directory path of the module containing the given object name.\n\n\n\n\n\n\n\n\n\n construct_class_by_name (*args, class_name:str=None, **kwargs)\n\nFinds the python class with the given name and constructs it with the given arguments.\n\n\n\n\n\n\n\n\n\n call_func_by_name (*args, func_name:str=None, **kwargs)\n\nFinds the python object with the given name and calls it as a function.\n\n\n\n\n\n\n\n\n\n get_obj_by_name (name:str)\n\nFinds the python object with the given name.\n\n\n\n\n\n\n\n\n\n get_obj_from_module (module:module, obj_name:str)\n\nTraverses the object name and returns the last (rightmost) python object.\n\n\n\n\n\n\n\n\n\n get_module_from_obj_name (obj_name:str)\n\nSearches for the underlying module behind the name to some python object.\n\n\n\n\n\n\n\n\n\n is_pickleable (obj:Any)\n\n\n\n\n\n\n\n\n\n\n get_dtype_and_ctype (type_obj:Any)\n\nGiven a type name string (or an object having a name attribute), return matching Numpy and ctypes types that have the same size in bytes.\n\n\n\n\n\n\n\n\n\n tuple_product (t:Tuple)\n\nCalculate the product of the tuple elements.\n\n\n\n\n\n\n\n\n\n ask_yes_no (question:str)\n\nAsk the user the question until the user inputs a valid answer.\n\n\n\n\n\n\n\n\n\n format_time (seconds:Union[int,float])\n\nConvert the seconds to human readable string with days, hours, minutes and seconds.\n\n\n\n\n\n\n\n\n\n make_cache_dir_path (*paths:str)\n\n\n\n\n\n\n\n\n\n\n set_cache_dir (path:str)\n\n\n\n\n\n\n\n\n\n\n Logger (file_name:str=None, file_mode:str='w', should_flush:bool=True)\n\nRedirect stderr to stdout, optionally print stdout to a file, and optionally force flushing on both stdout and the file.\n\n\n\n\n\n\n\n\nConvenience class that behaves like a dict but allows access with the attribute syntax.\n\n\n\n\n\n\n\n\n\n import_hook (hook)\n\nRegister an import hook that is called whenever a persistent object\n\n\n\n\n\n\n\n\n\n is_persistent (obj)\n\nTest whether the given object or class is persistent, i.e.,\n\n\n\n\n\n\n\n\n\n persistent_class (orig_class)\n\nClass decorator that extends a given class to save its source code\n\n\n\n\n!nbdev_build_lib\n\nConverted 00_base_model.ipynb.\nConverted 01_lit_model.ipynb.\nConverted 02_loss.ipynb.\nConverted 03_persistance.ipynb.\nConverted init.ipynb."
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "LitClassifier",
+    "section": "",
+    "text": "#hide"
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "LitClassifier",
+    "section": "Install",
+    "text": "Install\npip install -e ./"
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "LitClassifier",
+    "section": "How to use",
+    "text": "How to use\nFill me in please! Don’t forget code examples:\ngit clone https://github.com/anhvth/litclassifier\npip install -e ./litclassifier"
+  },
+  {
     "objectID": "01_lit_model.html#schedulers",
     "href": "01_lit_model.html#schedulers",
     "title": "LitModel",

@@ -1,6 +1,7 @@
 website:
   sidebar:
     contents:
+      - index.ipynb
       - 00_all.ipynb
       - 01_lit_model.ipynb
       - 02_loss.ipynb
