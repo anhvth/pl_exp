@@ -80,4 +80,5 @@ d = { 'settings': { 'audience': 'Developers',
                                  'ple.persistance.set_cache_dir': 'https://anhvth.github.io/ple/persistance.html#set_cache_dir',
                                  'ple.persistance.tuple_product': 'https://anhvth.github.io/ple/persistance.html#tuple_product'},
             'ple.trainer': { 'ple.trainer.get_exp_by_file': 'https://anhvth.github.io/ple/trainer.html#get_exp_by_file',
+                             'ple.trainer.get_rank': 'https://anhvth.github.io/ple/trainer.html#get_rank',
                              'ple.trainer.train': 'https://anhvth.github.io/ple/trainer.html#train'}}}
