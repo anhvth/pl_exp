@@ -75,4 +75,6 @@ d = { 'settings': { 'audience': 'Developers',
                                             'lit_classifier.persistance.open_url': 'https://anhvth.github.io/lit_classifier/persistance.html#open_url',
                                             'lit_classifier.persistance.persistent_class': 'https://anhvth.github.io/lit_classifier/persistance.html#persistent_class',
                                             'lit_classifier.persistance.set_cache_dir': 'https://anhvth.github.io/lit_classifier/persistance.html#set_cache_dir',
-                                            'lit_classifier.persistance.tuple_product': 'https://anhvth.github.io/lit_classifier/persistance.html#tuple_product'}}}
+                                            'lit_classifier.persistance.tuple_product': 'https://anhvth.github.io/lit_classifier/persistance.html#tuple_product'},
+            'lit_classifier.trainer': { 'lit_classifier.trainer.get_exp_by_file': 'https://anhvth.github.io/lit_classifier/trainer.html#get_exp_by_file',
+                                        'lit_classifier.trainer.train': 'https://anhvth.github.io/lit_classifier/trainer.html#train'}}}

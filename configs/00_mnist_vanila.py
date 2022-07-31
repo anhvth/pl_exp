@@ -76,6 +76,7 @@ class Exp(BaseExp):
         self.lr = 0.15
         self.batch_size = 128
         self.num_lr_cycles = 3
+        self.max_epochs = 20
 
 
     def get_optimizer(self):
