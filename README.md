@@ -13,9 +13,16 @@ LitClassifier
 
 ## How to use
 
-Fill me in please! Don’t forget code examples:
-
 ``` bash
 git clone https://github.com/anhvth/litclassifier
 pip install -e ./litclassifier
+```
+
+## Trainer example
+
+``` bash
+lit_trainer --help
+# Demo training with simple mnist model
+# To change model please take a look at `configs/00_mnist_vanila.py`
+lit_trainer configs/00_mnist_vanila.py
 ```
