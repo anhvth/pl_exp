@@ -5,125 +5,9 @@ import torch
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader, random_split
 
-from lit_classifier.lit_model import *
-from lit_classifier.loss import FocalLoss
+from lit_classifier.all import *
 
 # --------------------Lit model config
-
-
-class MyLitModel(pl.LightningModule):
-    def __init__(self, model, optim_cfg=None, loss=FocalLoss()):
-        super().__init__()
-        self.model = model
-        self.loss_fn = loss
-        self.optim_cfg = optim_cfg
-        self.lr = 10e-3
-
-    def get_linear_schedule_with_warmup(self, optimizer, num_warmup_steps,
-                                        num_training_steps, init_lr, min_lr,
-                                        num_epochs, interval):
-        def lr_lambda(current_step: int):
-            if current_step < num_warmup_steps:
-                x = (1 - init_lr) * (current_step / num_warmup_steps) + init_lr
-                return x
-            if interval == 'epoch':
-                steps_per_ep = num_training_steps / num_epochs
-                current_ep = current_step // steps_per_ep
-                current_step = steps_per_ep * current_ep
-
-            total_step = (num_training_steps - num_warmup_steps)
-            current_step = current_step - num_warmup_steps
-            rt = min_lr + (1 - min_lr) * (1 - current_step / total_step)
-            return rt
-
-        return LambdaLR(optimizer, lr_lambda, -1)
-
-    def configure_optimizers(self):
-        if self.optim_cfg is None:
-            import ipdb; ipdb.set_trace()
-            logger.warning('Please add optim cfg and re-init this object')
-
-        if self.optim_cfg['optim'] == 'Adam':
-            optimizer = torch.optim.Adam(self.parameters(),
-                                         lr=self.optim_cfg["lr"])
-        elif self.optim_cfg['optim'] == 'AdamW':
-            optimizer = torch.optim.AdamW(self.parameters(),
-                                          lr=self.optim_cfg["lr"],
-                                          betas=(0.9, 0.999),
-                                          eps=1e-08,
-                                          weight_decay=0.01,
-                                          amsgrad=False)
-        else:
-            assert isinstance(self.optim_cfg['optim'], torch.optim.Optimizer)
-            optimizer = self.optim_cfg['optim']
-
-        scheduler = {
-            "scheduler":
-            self.get_linear_schedule_with_warmup(
-                optimizer, self.optim_cfg["steps"] * 0.15,
-                self.optim_cfg["steps"], self.optim_cfg["init_lr"],
-                self.optim_cfg["min_lr"], self.optim_cfg["epochs"],
-                self.optim_cfg['interval']),
-            "interval":
-            'step',  # or 'epoch'
-            "frequency":
-            1,
-        }
-
-        return [optimizer], [scheduler]
-
-    def forward(self, x):
-        return self.model(x)
-
-    def predict_step(self, batch, batch_idx):
-        x = batch
-        logits = self(x)
-        scores = logits.sigmoid()
-        # return dict(scores=scores)
-        return scores
-
-    def validation_step(self, batch, batch_idx):
-        x, y = batch[:2]
-        logits = self(x)
-        loss = self.loss_fn(logits, y)
-
-        preds = logits.softmax(1).argmax(1)
-        accs = (y == preds).float().mean()
-
-        self.log("val_loss",
-                 loss,
-                 rank_zero_only=True,
-                 prog_bar=True,
-                 on_step=False,
-                 on_epoch=True)
-        self.log("val_acc",
-                 accs,
-                 rank_zero_only=True,
-                 prog_bar=True,
-                 on_step=False,
-                 on_epoch=True)
-
-        return loss
-
-    def training_step(self, batch, batch_idx):
-        x, y = batch[:2]
-        logits = self(x)
-        loss = self.loss_fn(logits, y)
-        preds = logits.softmax(1).argmax(1)
-        accs = (y == preds).float().mean()
-
-        self.log("training_loss",
-                 loss,
-                 prog_bar=True,
-                 rank_zero_only=True,
-                 on_epoch=True)
-        self.log("training_accuracy",
-                 accs,
-                 prog_bar=True,
-                 rank_zero_only=True,
-                 on_epoch=True)
-        return loss
-
 
 #-------------------------------- DATA CONFIG
 class DataModule(pl.LightningDataModule):
@@ -186,10 +70,33 @@ class DataModule(pl.LightningDataModule):
                           num_workers=self.num_workers)
 
 
-class Exp:
-    def get_model(self, **kwargs):
-        model = timm.create_model('resnet18', True, num_classes=10)
-        return MyLitModel(model, **kwargs)
+class Exp(BaseExp):
+    def __init__(self):
+        self.lr = 0.15
+        self.batch_size = 32
+        self.num_lr_schedule_cycles = 3
 
-    def get_data(self, batch_size, **kwargs):
-        return DataModule(batch_size=batch_size, **kwargs)
+    def get_optimizer(self):
+        create_optim_fn = lambda params: torch.optim.Adam(params, lr=self.lr)
+        return create_optim_fn
+
+    def get_lr_scheduler(self):
+        data = self.get_data_loader()
+        data.setup(None)
+        lr_schdule_cfg = dict(type='cosine', 
+            train_loader=data.train_dataloader(), 
+            num_epochs_per_cycle=self.num_lr_schedule_cycles)
+        return lr_schdule_cfg
+
+    def get_model(self, max_epochs, **kwargs):
+        model = timm.create_model('mobilenetv2_035', True, num_classes=10)
+        return LitModel(model, **kwargs)
+
+    def get_data_loader(self,**kwargs):
+        if not hasattr(self, 'data'):
+            self.data = DataModule(batch_size=self.batch_size, **kwargs)
+        return self.data
+        
+if __name__ == '__main__':
+    exp = Exp()
+    print(exp)

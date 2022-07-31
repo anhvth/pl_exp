@@ -44,13 +44,13 @@ from timm.scheduler.cosine_lr import CosineLRScheduler, Scheduler
 #                 optim=optim, 
 #                 num_epochs_per_cycle=num_epochs_per_cycle,
 #                 num_steps_per_epoch=num_steps_per_epoch, **kwargs)
-def plot_lr_step_schedule(fn, num_epochs, num_steps_per_epoch):
+def plot_lr_step_schedule(fn, lr, num_epochs, num_steps_per_epoch):
     import matplotlib.pyplot as plt
     lrs = []
     steps = num_epochs*num_steps_per_epoch
     for step in range(steps):
-        lrs.append(fn(step))
-
+        lrs.append(fn(step)*lr)
+    print(f'{min(lrs)=:0.5f}, {max(lrs)=:0.5f}')
     plt.plot(range(steps),lrs)
     plt.show()
 
@@ -94,23 +94,47 @@ def get_scheduler(optimizer, lr_schedule_fn, interval='step', verbose=False):
     }
     return scheduler
 
-# %% ../nbs/01_lit_model.ipynb 11
+# %% ../nbs/01_lit_model.ipynb 12
 class LitModel(LightningModule):
-    __repr__ = basic_repr('model,optim_schedule_fn,loss')
-    def __init__(self, model, create_schedule_fn=None, create_optimizer_fn=None, loss_fn=nn.CrossEntropyLoss()):
+    
+    def __init__(self, model, 
+                 lr_schdule_cfg=dict(type='cosine', train_loader=None), 
+                 create_optimizer_fn=None, 
+                 loss_fn=nn.CrossEntropyLoss()):
+        
         super().__init__()
         store_attr()
+        
+        assert self.lr_schdule_cfg['type'] in ['linear', 'cosine']
     
     def configure_optimizers(self):
         """
             Setup optimizer and scheduler
         """
-
-        assert self.create_schedule_fn is not None
-        assert self.create_optimizer_fn is not None
-            
+        assert self.create_optimizer_fn is not None            
         optimizer = self.create_optimizer_fn(self.model.parameters())
-        scheduler = get_scheduler(optimizer, self.create_schedule_fn)
+        
+        num_epochs = self.trainer.max_epochs
+        schedule_type = self.lr_schdule_cfg['type']
+        train_loader = self.lr_schdule_cfg['train_loader']
+        del self.lr_schdule_cfg['type']
+        del self.lr_schdule_cfg['train_loader']
+        
+        if schedule_type == 'cosine':
+            create_schedule_fn = fn_schedule_cosine_with_warmpup_decay_timm(
+                num_epochs=self.trainer.max_epochs,
+                num_steps_per_epoch=len(train_loader),
+                **self.lr_schdule_cfg
+            )
+        elif schedule_type == 'linear':
+            create_schedule_fn = fn_schedule_linear_with_warmup(
+                num_epochs=self.trainer.max_epochs,
+                num_steps_per_epoch=len(train_loader)
+            )
+        else:
+            raise NotImplementedError
+        
+        scheduler = get_scheduler(optimizer, create_schedule_fn)
         return [optimizer], [scheduler]
 
 
@@ -141,16 +165,14 @@ class LitModel(LightningModule):
         self.log("training_accuracy", accs, prog_bar=True, rank_zero_only=True, on_epoch=True)
         return loss
 
-# %% ../nbs/01_lit_model.ipynb 13
+# %% ../nbs/01_lit_model.ipynb 15
 def get_trainer(exp_name, gpus=1, max_epochs=None, distributed=False,
         monitor=dict(metric="val_acc", mode="max"), save_every_n_epochs=1, save_top_k=1, use_version=True,
-    
     trainer_kwargs=dict(), optim_cfg=None):
     if max_epochs is None:
         assert optim_cfg is not None, f'optim_cfg and max_epoch cannot be both None'
         max_epochs = optim_cfg['epochs']
         
-    now = datetime.now() + timedelta(hours=7)
     
     root_log_dir = osp.join(
             "lightning_logs", exp_name)
