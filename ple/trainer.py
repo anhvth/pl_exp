@@ -57,5 +57,7 @@ def train(
                               accelerator=accelerator,
                           ))
 
+    mmcv.mkdir_or_exist(trainer.log_dir)
+    shutil.copy(cfg_path, osp.join(trainer.log_dir, osp.basename(cfg_path)))
     trainer.fit(model, data)
 
