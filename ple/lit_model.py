@@ -17,10 +17,10 @@ from fastcore.all import *
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 try:
-    from lit_classifier.loss import FocalLoss, BinaryFocalLoss
-except:
+    from ple.loss import FocalLoss, BinaryFocalLoss
+except Exception as e:
     FocalLoss, BinaryFocalLoss = None, None
-    logger.warning('Install mmcv-full if you wish to use FocalLoss')
+    logger.warning('Exception: {}\nInstall mmcv-full if you wish to use FocalLoss', e)
 import os.path as osp
 from torch.optim.lr_scheduler import LambdaLR
 

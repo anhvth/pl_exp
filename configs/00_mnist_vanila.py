@@ -5,7 +5,7 @@ import torch
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader, random_split
 
-from lit_classifier.all import *
+from ple.all import *
 
 # --------------------Lit model config
 
@@ -39,7 +39,7 @@ class DataModule(pl.LightningDataModule):
         from torchvision.datasets import MNIST
         self.ds_test = MNIST(self.data_dir,
                                 train=False,
-                                transform=self.train_transform)
+                                transform=self.train_transform, download=True)
         self.ds_predict = MNIST(self.data_dir,
                                    train=False,
                                    transform=self.train_transform)
