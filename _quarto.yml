@@ -14,7 +14,7 @@ format:
     toc: true
 
 website:
-  title: "pl_exp"
+  title: "ple"
   description: "PytorchLightning experiment template"
   execute: 
     enabled: false

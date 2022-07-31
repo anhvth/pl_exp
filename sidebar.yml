@@ -1,0 +1,25 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_core.ipynb
+      - CONTRIBUTING.md
+      - README.md
+      - section: docs
+        contents:
+          - docs/index.html
+          - docs/01_lit_model.html
+          - docs/03_persistance.html
+          - docs/04_base_exp.html
+          - docs/all.html
+          - docs/loss.html
+          - docs/trainer.html
+      - section: nbs
+        contents:
+          - nbs/index.ipynb
+          - nbs/00_all.ipynb
+          - nbs/01_lit_model.ipynb
+          - nbs/02_loss.ipynb
+          - nbs/03_persistance.ipynb
+          - nbs/04_base_exp.ipynb
+          - nbs/05_trainer.ipynb

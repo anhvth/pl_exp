@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>ple – persistance</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">ple</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/anhvth/pl_exp/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">(Untitled)</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Project name here</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../core.html" class="sidebar-item-text sidebar-link">module name here</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../CONTRIBUTING.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">docs</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">nbs</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nbs/index.html" class="sidebar-item-text sidebar-link">LitClassifier</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nbs/all.html" class="sidebar-item-text sidebar-link">ALL</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nbs/01_lit_model.html" class="sidebar-item-text sidebar-link">LitModel</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nbs/loss.html" class="sidebar-item-text sidebar-link">Losses</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nbs/03_persistance.html" class="sidebar-item-text sidebar-link active">Persistance</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nbs/04_base_exp.html" class="sidebar-item-text sidebar-link">Base_exp</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nbs/trainer.html" class="sidebar-item-text sidebar-link">Trainer</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#persistance" id="toc-persistance" class="nav-link active" data-scroll-target="#persistance">Persistance</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/anhvth/pl_exp/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="persistance" class="level1">
+<h1>Persistance</h1>
+<div class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<hr>
+<section id="open_url" class="level4">
+<h4 class="anchored" data-anchor-id="open_url">open_url</h4>
+<blockquote class="blockquote">
+<pre><code> open_url (url:str, cache_dir:str=None, num_attempts:int=10,
+           verbose:bool=True, return_filename:bool=False, cache:bool=True)</code></pre>
+</blockquote>
+<p>Download the given URL and return a binary-mode file object to access the data.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="2">
+<hr>
+<section id="is_url" class="level4">
+<h4 class="anchored" data-anchor-id="is_url">is_url</h4>
+<blockquote class="blockquote">
+<pre><code> is_url (obj:Any, allow_file_urls:bool=False)</code></pre>
+</blockquote>
+<p>Determine whether the given object is a valid URL string.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="3">
+<hr>
+<section id="copy_files_and_create_dirs" class="level4">
+<h4 class="anchored" data-anchor-id="copy_files_and_create_dirs">copy_files_and_create_dirs</h4>
+<blockquote class="blockquote">
+<pre><code> copy_files_and_create_dirs (files:List[Tuple[str,str]])</code></pre>
+</blockquote>
+<p>Takes in a list of tuples of (src, dst) paths and copies files.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="4">
+<hr>
+<section id="list_dir_recursively_with_ignore" class="level4">
+<h4 class="anchored" data-anchor-id="list_dir_recursively_with_ignore">list_dir_recursively_with_ignore</h4>
+<blockquote class="blockquote">
+<pre><code> list_dir_recursively_with_ignore (dir_path:str, ignores:List[str]=None,
+                                   add_base_to_relative:bool=False)</code></pre>
+</blockquote>
+<p>List all files recursively in a given directory while ignoring given file and directory names.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="5">
+<hr>
+<section id="get_top_level_function_name" class="level4">
+<h4 class="anchored" data-anchor-id="get_top_level_function_name">get_top_level_function_name</h4>
+<blockquote class="blockquote">
+<pre><code> get_top_level_function_name (obj:Any)</code></pre>
+</blockquote>
+<p>Return the fully-qualified name of a top-level function.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="6">
+<hr>
+<section id="is_top_level_function" class="level4">
+<h4 class="anchored" data-anchor-id="is_top_level_function">is_top_level_function</h4>
+<blockquote class="blockquote">
+<pre><code> is_top_level_function (obj:Any)</code></pre>
+</blockquote>
+<p>Determine whether the given object is a top-level function, i.e., defined at module scope using ‘def’.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="7">
+<hr>
+<section id="get_module_dir_by_obj_name" class="level4">
+<h4 class="anchored" data-anchor-id="get_module_dir_by_obj_name">get_module_dir_by_obj_name</h4>
+<blockquote class="blockquote">
+<pre><code> get_module_dir_by_obj_name (obj_name:str)</code></pre>
+</blockquote>
+<p>Get the directory path of the module containing the given object name.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display" data-execution_count="8">
+<hr>
+<section id="construct_class_by_name" class="level4">
+<h4 class="anchored" data-anchor-id="construct_class_by_name">construct_class_by_name</h4>
+<blockquote class="blockquote">
+<pre><code> construct_class_by_name (*args, class_name:str=None, **kwargs)</code></pre>
+</blockquote>
+<p>Finds the python class with the given name and constructs it with the given arguments.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="9">
+<hr>
+<section id="call_func_by_name" class="level4">
+<h4 class="anchored" data-anchor-id="call_func_by_name">call_func_by_name</h4>
+<blockquote class="blockquote">
+<pre><code> call_func_by_name (*args, func_name:str=None, **kwargs)</code></pre>
+</blockquote>
+<p>Finds the python object with the given name and calls it as a function.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="10">
+<hr>
+<section id="get_obj_by_name" class="level4">
+<h4 class="anchored" data-anchor-id="get_obj_by_name">get_obj_by_name</h4>
+<blockquote class="blockquote">
+<pre><code> get_obj_by_name (name:str)</code></pre>
+</blockquote>
+<p>Finds the python object with the given name.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="11">
+<hr>
+<section id="get_obj_from_module" class="level4">
+<h4 class="anchored" data-anchor-id="get_obj_from_module">get_obj_from_module</h4>
+<blockquote class="blockquote">
+<pre><code> get_obj_from_module (module:module, obj_name:str)</code></pre>
+</blockquote>
+<p>Traverses the object name and returns the last (rightmost) python object.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="12">
+<hr>
+<section id="get_module_from_obj_name" class="level4">
+<h4 class="anchored" data-anchor-id="get_module_from_obj_name">get_module_from_obj_name</h4>
+<blockquote class="blockquote">
+<pre><code> get_module_from_obj_name (obj_name:str)</code></pre>
+</blockquote>
+<p>Searches for the underlying module behind the name to some python object.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="13">
+<hr>
+<section id="is_pickleable" class="level4">
+<h4 class="anchored" data-anchor-id="is_pickleable">is_pickleable</h4>
+<blockquote class="blockquote">
+<pre><code> is_pickleable (obj:Any)</code></pre>
+</blockquote>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="14">
+<div class="cell-output cell-output-display" data-execution_count="14">
+<hr>
+<section id="get_dtype_and_ctype" class="level4">
+<h4 class="anchored" data-anchor-id="get_dtype_and_ctype">get_dtype_and_ctype</h4>
+<blockquote class="blockquote">
+<pre><code> get_dtype_and_ctype (type_obj:Any)</code></pre>
+</blockquote>
+<p>Given a type name string (or an object having a <strong>name</strong> attribute), return matching Numpy and ctypes types that have the same size in bytes.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="15">
+<div class="cell-output cell-output-display" data-execution_count="15">
+<hr>
+<section id="tuple_product" class="level4">
+<h4 class="anchored" data-anchor-id="tuple_product">tuple_product</h4>
+<blockquote class="blockquote">
+<pre><code> tuple_product (t:Tuple)</code></pre>
+</blockquote>
+<p>Calculate the product of the tuple elements.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="16">
+<div class="cell-output cell-output-display" data-execution_count="16">
+<hr>
+<section id="ask_yes_no" class="level4">
+<h4 class="anchored" data-anchor-id="ask_yes_no">ask_yes_no</h4>
+<blockquote class="blockquote">
+<pre><code> ask_yes_no (question:str)</code></pre>
+</blockquote>
+<p>Ask the user the question until the user inputs a valid answer.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="17">
+<div class="cell-output cell-output-display" data-execution_count="17">
+<hr>
+<section id="format_time" class="level4">
+<h4 class="anchored" data-anchor-id="format_time">format_time</h4>
+<blockquote class="blockquote">
+<pre><code> format_time (seconds:Union[int,float])</code></pre>
+</blockquote>
+<p>Convert the seconds to human readable string with days, hours, minutes and seconds.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="18">
+<hr>
+<section id="make_cache_dir_path" class="level4">
+<h4 class="anchored" data-anchor-id="make_cache_dir_path">make_cache_dir_path</h4>
+<blockquote class="blockquote">
+<pre><code> make_cache_dir_path (*paths:str)</code></pre>
+</blockquote>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="19">
+<div class="cell-output cell-output-display" data-execution_count="19">
+<hr>
+<section id="set_cache_dir" class="level4">
+<h4 class="anchored" data-anchor-id="set_cache_dir">set_cache_dir</h4>
+<blockquote class="blockquote">
+<pre><code> set_cache_dir (path:str)</code></pre>
+</blockquote>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="20">
+<hr>
+<section id="logger" class="level3">
+<h3 class="anchored" data-anchor-id="logger">Logger</h3>
+<blockquote class="blockquote">
+<pre><code> Logger (file_name:str=None, file_mode:str='w', should_flush:bool=True)</code></pre>
+</blockquote>
+<p>Redirect stderr to stdout, optionally print stdout to a file, and optionally force flushing on both stdout and the file.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="21">
+<hr>
+<section id="easydict" class="level3">
+<h3 class="anchored" data-anchor-id="easydict">EasyDict</h3>
+<p>Convenience class that behaves like a dict but allows access with the attribute syntax.</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="22">
+<hr>
+<section id="import_hook" class="level4">
+<h4 class="anchored" data-anchor-id="import_hook">import_hook</h4>
+<blockquote class="blockquote">
+<pre><code> import_hook (hook)</code></pre>
+</blockquote>
+<p>Register an import hook that is called whenever a persistent object</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="23">
+<hr>
+<section id="is_persistent" class="level4">
+<h4 class="anchored" data-anchor-id="is_persistent">is_persistent</h4>
+<blockquote class="blockquote">
+<pre><code> is_persistent (obj)</code></pre>
+</blockquote>
+<p>Test whether the given object or class is persistent, i.e.,</p>
+</section>
+</div>
+</div>
+<div class="cell" data-execution_count="24">
+<div class="cell-output cell-output-display" data-execution_count="24">
+<hr>
+<section id="persistent_class" class="level4">
+<h4 class="anchored" data-anchor-id="persistent_class">persistent_class</h4>
+<blockquote class="blockquote">
+<pre><code> persistent_class (orig_class)</code></pre>
+</blockquote>
+<p>Class decorator that extends a given class to save its source code</p>
+</section>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>nbdev_build_lib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Converted 00_base_model.ipynb.
+Converted 01_lit_model.ipynb.
+Converted 02_loss.ipynb.
+Converted 03_persistance.ipynb.
+Converted init.ipynb.</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
