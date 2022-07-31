@@ -144,3 +144,5 @@ checklink/cookies.txt
 old
 nbs/MNIST/
 lightning_logs/
+conda
+quarto-macos.pkg
