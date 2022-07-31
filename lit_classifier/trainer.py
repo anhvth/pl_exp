@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['get_exp_by_file', 'train']
 
-# %% ../nbs/05_trainer.ipynb 2
+# %% ../nbs/05_trainer.ipynb 3
 import os
 import os.path as osp
 from argparse import ArgumentParser
@@ -49,7 +49,7 @@ def train(
     trainer = get_trainer(exp_name,
                           devices,
                           distributed=devices > 1,
-                          max_epochs=max_epochs)
+                          max_epochs=cfg.max_epochs)
 
     # import ipdb; ipdb.set_trace()
     mmcv.mkdir_or_exist(trainer.log_dir)

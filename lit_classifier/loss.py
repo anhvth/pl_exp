@@ -32,6 +32,7 @@ def reduce_loss(loss, reduction):
     elif reduction_enum == 2:
         return loss.sum()
 
+
 def weight_reduce_loss(loss, weight=None, reduction='mean', avg_factor=None):
     """Apply element-wise weight and reduce loss.
 
@@ -234,6 +235,7 @@ class FocalLoss(nn.Module):
         else:
             raise NotImplementedError
         return loss_cls
+
 
 # %% ../nbs/02_loss.ipynb 5
 class BinaryFocalLoss(nn.Module):
