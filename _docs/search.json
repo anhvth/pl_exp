@@ -1,0 +1,114 @@
+[
+  {
+    "objectID": "core.html",
+    "href": "core.html",
+    "title": "module name here",
+    "section": "",
+    "text": "foo ()"
+  },
+  {
+    "objectID": "nbs/04_base_exp.html",
+    "href": "nbs/04_base_exp.html",
+    "title": "Base_exp",
+    "section": "",
+    "text": "BaseExp ()\n\nBasic class for any experiment."
+  },
+  {
+    "objectID": "nbs/loss.html",
+    "href": "nbs/loss.html",
+    "title": "Losses",
+    "section": "",
+    "text": "BinaryFocalLoss\n\n\n\n\nBinaryFocalLoss\n\n BinaryFocalLoss (alpha=0.25, gamma=2, logits=True, reduce=True)\n\nBase class for all neural network modules."
+  },
+  {
+    "objectID": "nbs/all.html",
+    "href": "nbs/all.html",
+    "title": "ALL",
+    "section": "",
+    "text": "!nbdev_export"
+  },
+  {
+    "objectID": "nbs/03_persistance.html",
+    "href": "nbs/03_persistance.html",
+    "title": "ple",
+    "section": "",
+    "text": "open_url (url:str, cache_dir:str=None, num_attempts:int=10,\n           verbose:bool=True, return_filename:bool=False, cache:bool=True)\n\nDownload the given URL and return a binary-mode file object to access the data.\n\n\n\n\n\n\n\n\n\n is_url (obj:Any, allow_file_urls:bool=False)\n\nDetermine whether the given object is a valid URL string.\n\n\n\n\n\n\n\n\n\n copy_files_and_create_dirs (files:List[Tuple[str,str]])\n\nTakes in a list of tuples of (src, dst) paths and copies files.\n\n\n\n\n\n\n\n\n\n list_dir_recursively_with_ignore (dir_path:str, ignores:List[str]=None,\n                                   add_base_to_relative:bool=False)\n\nList all files recursively in a given directory while ignoring given file and directory names.\n\n\n\n\n\n\n\n\n\n get_top_level_function_name (obj:Any)\n\nReturn the fully-qualified name of a top-level function.\n\n\n\n\n\n\n\n\n\n is_top_level_function (obj:Any)\n\nDetermine whether the given object is a top-level function, i.e., defined at module scope using ‘def’.\n\n\n\n\n\n\n\n\n\n get_module_dir_by_obj_name (obj_name:str)\n\nGet the directory path of the module containing the given object name.\n\n\n\n\n\n\n\n\n\n construct_class_by_name (*args, class_name:str=None, **kwargs)\n\nFinds the python class with the given name and constructs it with the given arguments.\n\n\n\n\n\n\n\n\n\n call_func_by_name (*args, func_name:str=None, **kwargs)\n\nFinds the python object with the given name and calls it as a function.\n\n\n\n\n\n\n\n\n\n get_obj_by_name (name:str)\n\nFinds the python object with the given name.\n\n\n\n\n\n\n\n\n\n get_obj_from_module (module:module, obj_name:str)\n\nTraverses the object name and returns the last (rightmost) python object.\n\n\n\n\n\n\n\n\n\n get_module_from_obj_name (obj_name:str)\n\nSearches for the underlying module behind the name to some python object.\n\n\n\n\n\n\n\n\n\n is_pickleable (obj:Any)\n\n\n\n\n\n\n\n\n\n\n get_dtype_and_ctype (type_obj:Any)\n\nGiven a type name string (or an object having a name attribute), return matching Numpy and ctypes types that have the same size in bytes.\n\n\n\n\n\n\n\n\n\n tuple_product (t:Tuple)\n\nCalculate the product of the tuple elements.\n\n\n\n\n\n\n\n\n\n ask_yes_no (question:str)\n\nAsk the user the question until the user inputs a valid answer.\n\n\n\n\n\n\n\n\n\n format_time (seconds:Union[int,float])\n\nConvert the seconds to human readable string with days, hours, minutes and seconds.\n\n\n\n\n\n\n\n\n\n make_cache_dir_path (*paths:str)\n\n\n\n\n\n\n\n\n\n\n set_cache_dir (path:str)\n\n\n\n\n\n\n\n\n\n\n Logger (file_name:str=None, file_mode:str='w', should_flush:bool=True)\n\nRedirect stderr to stdout, optionally print stdout to a file, and optionally force flushing on both stdout and the file.\n\n\n\n\n\n\n\n\nConvenience class that behaves like a dict but allows access with the attribute syntax.\n\n\n\n\n\n\n\n\n\n import_hook (hook)\n\nRegister an import hook that is called whenever a persistent object\n\n\n\n\n\n\n\n\n\n is_persistent (obj)\n\nTest whether the given object or class is persistent, i.e.,\n\n\n\n\n\n\n\n\n\n persistent_class (orig_class)\n\nClass decorator that extends a given class to save its source code\n\n\n\n\n!nbdev_build_lib\n\nConverted 00_base_model.ipynb.\nConverted 01_lit_model.ipynb.\nConverted 02_loss.ipynb.\nConverted 03_persistance.ipynb.\nConverted init.ipynb."
+  },
+  {
+    "objectID": "nbs/index.html",
+    "href": "nbs/index.html",
+    "title": "LitClassifier",
+    "section": "",
+    "text": "git clone https://github.com/anhvth/litclassifier\npip install -e ./litclassifier"
+  },
+  {
+    "objectID": "nbs/index.html#trainer-example",
+    "href": "nbs/index.html#trainer-example",
+    "title": "LitClassifier",
+    "section": "Trainer example",
+    "text": "Trainer example\nlit_trainer --help\n# Demo training with simple mnist model\n# To change model please take a look at `configs/00_mnist_vanila.py`\nlit_trainer configs/00_mnist_vanila.py"
+  },
+  {
+    "objectID": "nbs/01_lit_model.html#schedulers",
+    "href": "nbs/01_lit_model.html#schedulers",
+    "title": "LitModel",
+    "section": "Schedulers",
+    "text": "Schedulers\n\n\n\n\nget_scheduler\n\n get_scheduler (optimizer, lr_schedule_fn, interval='step', verbose=False)\n\n\n\n\n\n\n\n\nfn_schedule_cosine_with_warmpup_decay_timm\n\n fn_schedule_cosine_with_warmpup_decay_timm (num_epochs,\n                                             num_steps_per_epoch,\n                                             num_epochs_per_cycle,\n                                             num_warmup_epochs=1,\n                                             init_lr=0.4, min_lr=0.1,\n                                             cycle_decay=0.8,\n                                             interval='step')\n\n\n\n\n\n\n\n\nfn_schedule_linear_with_warmup\n\n fn_schedule_linear_with_warmup (num_epochs, num_steps_per_epoch,\n                                 num_warmup_steps=0, init_lr=0.4,\n                                 min_lr=0.1)\n\n\n\n\n\n\n\n\nplot_lr_step_schedule\n\n plot_lr_step_schedule (fn, lr, num_epochs, num_steps_per_epoch)\n\n\n\n\n\nfn = fn_schedule_cosine_with_warmpup_decay_timm(100, 10, 30, 3)\nplot_lr_step_schedule(fn, 0.1, 100, 10)\n\n2022-07-31 13:23:56.651 | INFO     | __main__:fn_schedule_cosine_with_warmpup_decay_timm:52 - num_cycles=3\n\n\nmin(lrs)=0.01000, max(lrs)=0.09800\n\n\n\n\n\n\n# get_scheduler()"
+  },
+  {
+    "objectID": "nbs/01_lit_model.html#litmodel",
+    "href": "nbs/01_lit_model.html#litmodel",
+    "title": "LitModel",
+    "section": "LitModel",
+    "text": "LitModel\n\nfn_schedule_cosine_with_warmpup_decay_timm?\n\n\nSignature:\nfn_schedule_cosine_with_warmpup_decay_timm(\n    num_epochs,\n    num_steps_per_epoch,\n    num_epochs_per_cycle,\n    num_warmup_epochs=1,\n    init_lr=0.4,\n    min_lr=0.1,\n    cycle_decay=0.8,\n    interval='step',\n)\nDocstring: <no docstring>\nFile:      /tmp/ipykernel_19628/1125565782.py\nType:      function\n\n\n\n\n\n\n\n\nLitModel\n\n LitModel (model, create_optimizer_fn=None, create_lr_scheduler_fn=None,\n           loss_fn=CrossEntropyLoss())\n\nHooks to be used in LightningModule.\n\n\n\n\n\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\nmodel\n\n\n\n\n\ncreate_optimizer_fn\nNoneType\nNone\nlr_schdule_cfg=dict(type=‘cosine’, train_loader=None),\n\n\ncreate_lr_scheduler_fn\nNoneType\nNone\n\n\n\nloss_fn\nCrossEntropyLoss\nCrossEntropyLoss()"
+  },
+  {
+    "objectID": "nbs/01_lit_model.html#get-trainer",
+    "href": "nbs/01_lit_model.html#get-trainer",
+    "title": "LitModel",
+    "section": "Get trainer",
+    "text": "Get trainer\n\n\n\n\nget_trainer\n\n get_trainer (exp_name, gpus=1, max_epochs=None, distributed=False,\n              monitor={'metric':'val_acc','mode':'max'},\n              save_every_n_epochs=1, save_top_k=1, use_version=True,\n              trainer_kwargs={})"
+  },
+  {
+    "objectID": "nbs/trainer.html",
+    "href": "nbs/trainer.html",
+    "title": "Trainer",
+    "section": "",
+    "text": "train (cfg_path:<Pathtoconfig>, devices:int<GPUSindices>)"
+  },
+  {
+    "objectID": "nbs/trainer.html#test",
+    "href": "nbs/trainer.html#test",
+    "title": "Trainer",
+    "section": "Test",
+    "text": "Test"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Project name here",
+    "section": "",
+    "text": "This file will become your README and also the index of your documentation."
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "Project name here",
+    "section": "Install",
+    "text": "Install\npip install your_project_name"
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "Project name here",
+    "section": "How to use",
+    "text": "How to use\nFill me in please! Don’t forget code examples:\n\n1+1\n\n2"
+  },
+  {
+    "objectID": "CONTRIBUTING.html",
+    "href": "CONTRIBUTING.html",
+    "title": "ple",
+    "section": "",
+    "text": "Before anything else, please install the git hooks that run automatic scripts during each commit and merge to strip the notebooks of superfluous metadata (and avoid merge conflicts). After cloning the repository, run the following command inside it:\nnbdev_install_git_hooks\n\n\n\n\nEnsure the bug was not already reported by searching on GitHub under Issues.\nIf you’re unable to find an open issue addressing the problem, open a new one. Be sure to include a title and clear description, as much relevant information as possible, and a code sample or an executable test case demonstrating the expected behavior that is not occurring.\nBe sure to add the complete error messages.\n\n\n\n\nOpen a new GitHub pull request with the patch.\nEnsure that your PR includes a test that fails without your patch, and pass with it.\nEnsure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.\n\n\n\n\n\n\nKeep each PR focused. While it’s more convenient, do not combine several unrelated fixes together. Create as many branches as needing to keep each PR focused.\nDo not mix style changes/fixes with “functional” changes. It’s very difficult to review such PRs and it most likely get rejected.\nDo not add/remove vertical whitespace. Preserve the original style of the file you edit as much as you can.\nDo not turn an already submitted PR into your development playground. If after you submitted PR, you discovered that more work is needed - close the PR, do the required work and then submit a new PR. Otherwise each of your commits requires attention from maintainers of the project.\nIf, however, you submitted a PR and received a request for changes, you should proceed with commits inside that PR, so that the maintainer can see the incremental fixes and won’t need to review the whole PR again. In the exception case where you realize it’ll take many many commits to complete the requests, then it’s probably best to close the PR, do the work and then submit it again. Use common sense where you’d choose one way over another.\n\n\n\n\n\nDocs are automatically created from the notebooks in the nbs folder."
+  }
+]

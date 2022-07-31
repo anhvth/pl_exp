@@ -5,15 +5,6 @@ website:
       - 00_core.ipynb
       - CONTRIBUTING.md
       - README.md
-      - section: docs
-        contents:
-          - docs/index.html
-          - docs/01_lit_model.html
-          - docs/03_persistance.html
-          - docs/04_base_exp.html
-          - docs/all.html
-          - docs/loss.html
-          - docs/trainer.html
       - section: nbs
         contents:
           - nbs/index.ipynb
