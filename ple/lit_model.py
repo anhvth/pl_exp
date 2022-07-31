@@ -83,7 +83,7 @@ def get_scheduler(optimizer, lr_schedule_fn, interval='step', verbose=False):
     return scheduler
 
 
-# %% ../nbs/01_lit_model.ipynb 12
+# %% ../nbs/01_lit_model.ipynb 10
 class LitModel(LightningModule):
 
     def __init__(self, model,
@@ -135,9 +135,10 @@ class LitModel(LightningModule):
         return loss
 
 
-# %% ../nbs/01_lit_model.ipynb 15
-def get_trainer(exp_name, gpus=1, max_epochs=None, distributed=False,
-                monitor=dict(metric="val_acc", mode="max"), save_every_n_epochs=1, save_top_k=1, use_version=True,
+# %% ../nbs/01_lit_model.ipynb 13
+def get_trainer(exp_name, gpus=1, max_epochs=None,
+                monitor=dict(metric="val_acc", mode="max"), 
+                save_every_n_epochs=1, save_top_k=1, use_version=True,
                 trainer_kwargs=dict()):
     if max_epochs is None:
         assert optim_cfg is not None, f'optim_cfg and max_epoch cannot be both None'
@@ -170,11 +171,11 @@ def get_trainer(exp_name, gpus=1, max_epochs=None, distributed=False,
     plt_logger = TensorBoardLogger(
         osp.join(root_log_dir, "tb_logs"), version=version
     )
-
+    
     trainer = Trainer(
         gpus=gpus,
         max_epochs=max_epochs,
-        strategy="dp" if not distributed else "ddp",
+        strategy="dp" if gpus < 2 else "ddp",
         callbacks=[callback_ckpt, callback_tqdm, callback_lrmornitor],
         logger=plt_logger, **trainer_kwargs,
     )

@@ -40,6 +40,7 @@ def get_exp_by_file(exp_file):
 def train(
     cfg_path:Param('Path to config'),
     devices: Param('GPUS indices', default=1, type=int),
+    accelerator: Param('cpu or gpu', default='gpu', type=str),
 ):
     cfg = get_exp_by_file(cfg_path)
     print(cfg)
@@ -51,8 +52,10 @@ def train(
             create_optimizer_fn=cfg.get_optimizer())
     trainer = get_trainer(exp_name,
                           devices,
-                          distributed=devices > 1,
-                          max_epochs=cfg.max_epochs)
+                          max_epochs=cfg.max_epochs, 
+                          trainer_kwargs=dict(
+                              accelerator=accelerator,
+                          ))
 
     mmcv.mkdir_or_exist(trainer.log_dir)
     shutil.copy(cfg_path, osp.join(trainer.log_dir, osp.basename(cfg_path)))
