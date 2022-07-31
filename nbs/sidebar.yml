@@ -8,6 +8,3 @@ website:
       - 03_persistance.ipynb
       - 04_base_exp.ipynb
       - 05_trainer.ipynb
-      - section: docs
-        contents:
-          - docs/README.md
