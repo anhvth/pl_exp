@@ -72,9 +72,11 @@ class DataModule(pl.LightningDataModule):
 
 class Exp(BaseExp):
     def __init__(self):
+        super().__init__()
         self.lr = 0.15
-        self.batch_size = 32
+        self.batch_size = 128
         self.num_lr_schedule_cycles = 3
+
 
     def get_optimizer(self):
         create_optim_fn = lambda params: torch.optim.Adam(params, lr=self.lr)
@@ -83,12 +85,27 @@ class Exp(BaseExp):
     def get_lr_scheduler(self):
         data = self.get_data_loader()
         data.setup(None)
-        lr_schdule_cfg = dict(type='cosine', 
-            train_loader=data.train_dataloader(), 
-            num_epochs_per_cycle=self.num_lr_schedule_cycles)
-        return lr_schdule_cfg
+        #-------
+        num_epochs = self.max_epochs
+        schedule_type = "cosine"
+        train_loader = data.train_dataloader()
+        
+        if schedule_type == 'cosine':
+            create_schedule_fn = fn_schedule_cosine_with_warmpup_decay_timm(
+                num_epochs=self.max_epochs,
+                num_steps_per_epoch=len(train_loader),
+                num_epochs_per_cycle=self.max_epochs//self.num_lr_schedule_cycles
+            )
+        elif schedule_type == 'linear':
+            create_schedule_fn = fn_schedule_linear_with_warmup(
+                num_epochs=self.trainer.max_epochs,
+                num_steps_per_epoch=len(train_loader)
+            )
+        else:
+            raise NotImplementedError
+        return create_schedule_fn
 
-    def get_model(self, max_epochs, **kwargs):
+    def get_model(self, **kwargs):
         model = timm.create_model('mobilenetv2_035', True, num_classes=10)
         return LitModel(model, **kwargs)
 
@@ -96,7 +113,7 @@ class Exp(BaseExp):
         if not hasattr(self, 'data'):
             self.data = DataModule(batch_size=self.batch_size, **kwargs)
         return self.data
-        
+
 if __name__ == '__main__':
     exp = Exp()
     print(exp)

@@ -34,14 +34,12 @@ def main(params):
 
     data = cfg.get_data_loader()
 
-    model = cfg.get_model(params.max_epochs, 
-            lr_schdule_cfg=cfg.get_lr_scheduler(), 
+    model = cfg.get_model(create_lr_scheduler_fn=cfg.get_lr_scheduler(), 
             create_optimizer_fn=cfg.get_optimizer())
-
     trainer = get_trainer(exp_name,
                           params.devices,
                           distributed=params.devices > 1,
-                          max_epochs=params.max_epochs)
+                          max_epochs=cfg.max_epochs)
     if params.verbose:
         print(params.pretty_text)
     trainer.fit(model, data)
