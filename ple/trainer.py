@@ -10,19 +10,19 @@ from argparse import ArgumentParser
 import mmcv
 import torch
 from pytorch_lightning import Trainer, seed_everything
-from .all import get_trainer
+from .all import get_trainer, BaseExp
 import shutil
 from fastcore.script import *
+from fastcore.utils import *
 from torch.nn.parallel import DistributedDataParallel as DDP
 import torch.distributed as dist
 from loguru import logger
-
-def get_rank():
-    try:
-        rank = dist.get_rank()
-    except:
-        rank = 0
-    return rank
+def get_rank() -> int:
+    if not dist.is_available():
+        return 0
+    if not dist.is_initialized():
+        return 0
+    return dist.get_rank()
 
 def get_exp_by_file(exp_file):
     """
@@ -44,34 +44,31 @@ def get_exp_by_file(exp_file):
     except Exception:
         raise ImportError(
             "{} doesn't contains class named 'Exp'".format(exp_file))
+
         
 @call_parse
 def train(
     cfg_path:Param('Path to config'),
     devices: Param('GPUS indices', default=1, type=int),
     accelerator: Param('cpu or gpu', default='gpu', type=str),
+    opts: Param('Additional configs', default='', type=str, required=False),
 ):
-
+    rank = get_rank()
     cfg = get_exp_by_file(cfg_path)
-    print(cfg)
-    exp_name = osp.basename(cfg_path).split('.')[0]
-
+    cfg.merge(opts.replace('=',' ').split(' '))
+    
     data = cfg.get_data_loader()
 
     model = cfg.get_model(create_lr_scheduler_fn=cfg.get_lr_scheduler(), 
             create_optimizer_fn=cfg.get_optimizer())
-    trainer = get_trainer(exp_name,
-                          devices,
-                          max_epochs=cfg.max_epochs, 
-                          trainer_kwargs=dict(
-                              accelerator=accelerator,
-                          ))
+    trainer = cfg.get_trainer(devices)
     try:
         trainer.fit(model, data)
     except Exception as e:
         import traceback
         traceback.print_exc()
     finally:
+        print('Finally rank:', Trainer().local_rank, f'{get_rank() =}| {trainer.is_global_zero}')
         if get_rank() == 0:
             out_path = osp.join(trainer.log_dir, osp.basename(cfg_path))
             logger.info('cp {} {}', cfg_path, out_path)
