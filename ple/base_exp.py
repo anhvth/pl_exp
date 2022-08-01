@@ -14,7 +14,7 @@ import torch
 from torch.nn import Module
 import pytorch_lightning as pl
 from torch.optim.lr_scheduler import _LRScheduler
-from .all import get_trainer
+
 import os.path as osp
 
 class BaseExp(metaclass=ABCMeta):
@@ -67,6 +67,7 @@ class BaseExp(metaclass=ABCMeta):
                 setattr(self, k, v)
         
     def get_trainer(self, devices:int):
+        from ple.trainer import get_trainer
         return get_trainer(self.exp_name,
                                devices,
                               max_epochs=self.max_epochs, 
