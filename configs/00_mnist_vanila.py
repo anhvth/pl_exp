@@ -4,6 +4,7 @@ import timm
 import torch
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader, random_split
+import os
 
 from ple.all import *
 
@@ -77,6 +78,7 @@ class Exp(BaseExp):
         self.batch_size = 128
         self.num_lr_cycles = 3
         self.max_epochs = 20
+        self.exp_name = os.path.basename(__file__).split(".")[0]
 
 
     def get_optimizer(self):

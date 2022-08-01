@@ -6,18 +6,16 @@ __all__ = ['get_rank', 'get_exp_by_file', 'train']
 # %% ../nbs/05_trainer.ipynb 2
 import os
 import os.path as osp
-from argparse import ArgumentParser
-import mmcv
-import torch
-from pytorch_lightning import Trainer, seed_everything
-from .all import get_trainer, BaseExp
+# # from argparse import ArgumentParser
+# from pytorch_lightning import Trainer, seed_everything
+# # from ple.all import get_trainer, BaseExp
 import shutil
 from fastcore.script import *
 from fastcore.utils import *
-from torch.nn.parallel import DistributedDataParallel as DDP
-import torch.distributed as dist
 from loguru import logger
+
 def get_rank() -> int:
+    import torch.distributed as dist
     if not dist.is_available():
         return 0
     if not dist.is_initialized():
@@ -53,9 +51,9 @@ def train(
     accelerator: Param('cpu or gpu', default='gpu', type=str),
     opts: Param('Additional configs', default='', type=str, required=False),
 ):
-    rank = get_rank()
     cfg = get_exp_by_file(cfg_path)
-    cfg.merge(opts.replace('=',' ').split(' '))
+    if len(opts):
+        cfg.merge(opts.replace('=',' ').split(' '))
     
     data = cfg.get_data_loader()
 
@@ -68,7 +66,6 @@ def train(
         import traceback
         traceback.print_exc()
     finally:
-        print('Finally rank:', Trainer().local_rank, f'{get_rank() =}| {trainer.is_global_zero}')
         if get_rank() == 0:
             out_path = osp.join(trainer.log_dir, osp.basename(cfg_path))
             logger.info('cp {} {}', cfg_path, out_path)
