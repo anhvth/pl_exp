@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['plot_lr_step_schedule', 'fn_schedule_linear_with_warmup', 'fn_schedule_cosine_with_warmpup_decay_timm',
-           'get_scheduler', 'LitModel', 'get_trainer']
+           'get_scheduler', 'LitModel']
 
 # %% ../nbs/01_lit_model.ipynb 4
 from loguru import logger
@@ -25,7 +25,7 @@ import os.path as osp
 from torch.optim.lr_scheduler import LambdaLR
 
 
-# %% ../nbs/01_lit_model.ipynb 7
+# %% ../nbs/01_lit_model.ipynb 6
 from timm.scheduler.cosine_lr import CosineLRScheduler, Scheduler
 
 
@@ -83,14 +83,29 @@ def get_scheduler(optimizer, lr_schedule_fn, interval='step', verbose=False):
     return scheduler
 
 
-# %% ../nbs/01_lit_model.ipynb 10
+# %% ../nbs/01_lit_model.ipynb 9
 class LitModel(LightningModule):
+    """
+        sched = fn_schedule_cosine_with_warmpup_decay_timm(
+            num_epochs=EPOCHS,
+            num_steps_per_epoch=len(dl_train),
+            num_epochs_per_cycle=EPOCHS//2,
+            min_lr=1/100,
+            cycle_decay=0.7,
+        )
+        # plot_lr_step_schedule(sche, lr, num_epochs, step_per_epoch)
+        optim = lambda params:torch.optim.Adam(params)
 
+
+        model = Model()
+        lit_lstm = LitLSTM(model,create_optimizer_fn=optim,
+                                       create_lr_scheduler_fn=sched, loss_fn=nn.L1Loss()            
+    """
     def __init__(self, model,
-                 # lr_schdule_cfg=dict(type='cosine', train_loader=None),
                  create_optimizer_fn=None,
                  create_lr_scheduler_fn=None,
-                 loss_fn=nn.CrossEntropyLoss()):
+                 loss_fn=nn.CrossEntropyLoss()
+                ):
 
         super().__init__()
         store_attr()
@@ -133,51 +148,4 @@ class LitModel(LightningModule):
         self.log("training_accuracy", accs, prog_bar=True,
                  rank_zero_only=True, on_epoch=True)
         return loss
-
-
-# %% ../nbs/01_lit_model.ipynb 13
-def get_trainer(exp_name, gpus=1, max_epochs=None,
-                monitor=dict(metric="val_acc", mode="max"), 
-                save_every_n_epochs=1, save_top_k=1, use_version=True,
-                trainer_kwargs=dict()):
-    if max_epochs is None:
-        assert optim_cfg is not None, f'optim_cfg and max_epoch cannot be both None'
-        max_epochs = optim_cfg['epochs']
-
-    root_log_dir = osp.join(
-        "lightning_logs", exp_name)
-
-    cur_num_exps = len(os.listdir(root_log_dir)
-                       ) if osp.exists(root_log_dir) else 0
-    version = f"{cur_num_exps:02d}"
-
-    if use_version:
-        root_log_dir = osp.join(root_log_dir, version)
-        logger.info('Root log directory: {}'.format(root_log_dir))
-
-    filename = "{epoch}-{"+monitor["metric"]+":.2f}"
-
-    callback_ckpt = ModelCheckpoint(
-        dirpath=osp.join(root_log_dir, "ckpts"),
-        monitor=monitor['metric'], mode=monitor['mode'],
-        filename=filename,
-        save_last=True,
-        every_n_epochs=save_every_n_epochs,
-        save_top_k=save_top_k,
-    )
-
-    callback_tqdm = TQDMProgressBar(refresh_rate=5)
-    callback_lrmornitor = LearningRateMonitor(logging_interval="step")
-    plt_logger = TensorBoardLogger(
-        osp.join(root_log_dir, "tb_logs"), version=version
-    )
-    
-    trainer = Trainer(
-        gpus=gpus,
-        max_epochs=max_epochs,
-        strategy="dp" if gpus < 2 else "ddp",
-        callbacks=[callback_ckpt, callback_tqdm, callback_lrmornitor],
-        logger=plt_logger, **trainer_kwargs,
-    )
-    return trainer
 

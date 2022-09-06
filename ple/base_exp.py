@@ -17,11 +17,20 @@ from torch.optim.lr_scheduler import _LRScheduler
 
 import os.path as osp
 
+
 class BaseExp(metaclass=ABCMeta):
     """Basic class for any experiment."""
 
     def __init__(self):
+        # All hyper params should be listed here
         self.accelerator = 'gpu'
+        self.max_epochs:int = 100
+        self.devices:int = 1
+        
+        self.schedule_type = 'cosine'
+        self.num_lr_cycles = 3
+        self.min_lr = 1/100
+        self.cycle_decay = 0.7
         
     @abstractmethod
     def get_model(self) -> Module:
@@ -33,16 +42,40 @@ class BaseExp(metaclass=ABCMeta):
     ) -> pl.LightningDataModule:
         pass
 
-    @abstractmethod
-    def get_optimizer() -> torch.optim.Optimizer:
-        pass
+    def get_optimizer(self) -> torch.optim.Optimizer:
+         return lambda params:torch.optim.Adam(params)
 
-    @abstractmethod
-    def get_lr_scheduler(
-        self, lr: float, iters_per_epoch: int, **kwargs
-    ) -> _LRScheduler:
-        pass
 
+    def get_lr_scheduler(self, train_loader_len=None):
+        if train_loader_len is None:
+            data = self.get_data_loader()
+            data.setup(None)
+            #-------
+            num_epochs = self.max_epochs
+            train_loader = data.train_dataloader()
+            train_loader_len = len(train_loader)
+        
+        if self.schedule_type == 'cosine':
+            from ple.lit_model import fn_schedule_cosine_with_warmpup_decay_timm
+            create_schedule_fn = fn_schedule_cosine_with_warmpup_decay_timm(
+                num_epochs=self.max_epochs,
+                num_steps_per_epoch=train_loader_len//self.devices,
+                num_epochs_per_cycle=self.max_epochs//self.num_lr_cycles,
+                min_lr=self.min_lr,
+                cycle_decay=self.cycle_decay,
+            )
+        elif self.schedule_type == 'linear':
+            from ple.lit_model import fn_schedule_linear_with_warmup
+            create_schedule_fn = fn_schedule_linear_with_warmup(
+                num_epochs=self.trainer.max_epochs,
+                num_steps_per_epoch=train_loader_len//self.devices
+            )
+            
+        else:
+            raise NotImplementedError
+        return create_schedule_fn
+
+        
     def __repr__(self):
         table_header = ["keys", "values"]
         exp_table = [
@@ -51,6 +84,7 @@ class BaseExp(metaclass=ABCMeta):
             if not k.startswith("_")
         ]
         return tabulate(exp_table, headers=table_header, tablefmt="fancy_grid")
+    
     def merge(self, cfg_list):
         assert len(cfg_list) % 2 == 0
         for k, v in zip(cfg_list[0::2], cfg_list[1::2]):
@@ -66,12 +100,11 @@ class BaseExp(metaclass=ABCMeta):
                 print(f'Set {k}={v}')
                 setattr(self, k, v)
         
-    def get_trainer(self, devices:int):
+    def get_trainer(self):
         from ple.trainer import get_trainer
-        return get_trainer(self.exp_name,
-                               devices,
+        return get_trainer(self.exp_name, 
                               max_epochs=self.max_epochs, 
+                              gpus=self.devices,
                               trainer_kwargs=dict(
                                   accelerator=self.accelerator,
-                              )
-                            )
+                              ))
