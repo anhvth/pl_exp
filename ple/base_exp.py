@@ -43,7 +43,11 @@ class BaseExp(metaclass=ABCMeta):
         pass
 
     def get_optimizer(self) -> torch.optim.Optimizer:
-         return lambda params:torch.optim.Adam(params)
+        """
+            Examples:
+                return lambda params:torch.optim.Adam(params)
+        """
+        pass
 
 
     def get_lr_scheduler(self, train_loader_len=None):
@@ -108,3 +112,8 @@ class BaseExp(metaclass=ABCMeta):
                               trainer_kwargs=dict(
                                   accelerator=self.accelerator,
                               ))
+    def plot_lr_sche(self):
+        data = self.get_data_loader()
+        step_per_epoch = len(data.train_dataloader())
+        sched = self.get_lr_scheduler(step_per_epoch)
+        plot_lr_step_schedule(sched, self.lr, self.epochs, step_per_epoch)

@@ -74,7 +74,7 @@ def get_trainer(exp_name, max_epochs, gpus=1,
     )
     return trainer
 
-# %% ../nbs/05_trainer.ipynb 5
+# %% ../nbs/05_trainer.ipynb 4
 import os
 import os.path as osp
 # # from argparse import ArgumentParser
