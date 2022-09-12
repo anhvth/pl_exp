@@ -13,39 +13,25 @@ from loguru import logger
 
 
 
-def get_trainer(exp_name, max_epochs, gpus=1,
+def get_trainer(exp_name, max_epochs, 
+                gpus=1,
                 monitor=dict(metric="val_acc", mode="max"), 
-                save_every_n_epochs=1, save_top_k=1, use_version=True, strategy=None,
-                trainer_kwargs=dict()):
+                save_every_n_epochs=1, 
+                save_top_k=1, 
+                use_version=True, 
+                strategy=None,
+                refresh_rate=5):
     """ Example:
 
-    create_schedule_fn = fn_schedule_cosine_with_warmpup_decay_timm(
-        num_epochs=EPOCHS,
-        num_steps_per_epoch=len(dl_train),
-        num_epochs_per_cycle=EPOCHS//2,
-        min_lr=1/100,
-        cycle_decay=0.7,
-    )
-
-    model = Model()
-    lit_lstm = LitLSTM(model,create_optimizer_fn=lambda params:torch.optim.Adam(params),
-                                   create_lr_scheduler_fn=create_schedule_fn, loss_fn=nn.L1Loss())
-    trainer = get_trainer('lstm_trainer', EPOCHS, 
-                             monitor={'metric': 'val_loss', 'mode': 'min'},
-                         )
     """
-    root_log_dir = osp.join(
-        "lightning_logs", exp_name)
-
-    cur_num_exps = len(os.listdir(root_log_dir)
-                       ) if osp.exists(root_log_dir) else 0
+    
+    
+    rld = osp.join("lightning_logs", exp_name)
+    cur_num_exps = len(os.listdir(rld)) if osp.exists(rld) else 0
     version = f"{cur_num_exps:02d}"
-
-    # if use_version:
-    #     root_log_dir = osp.join(root_log_dir, version)
-    #     logger.info('Root log directory: {}'.format(root_log_dir))
-
     filename = "{epoch}-{"+monitor["metric"]+":.2f}"
+    root_log_dir = osp.join("lightning_logs", exp_name, version)
+    logger.info(f'Log root dir: {root_log_dir}')
 
     callback_ckpt = ModelCheckpoint(
         dirpath=osp.join(root_log_dir, "ckpts"),
@@ -58,8 +44,9 @@ def get_trainer(exp_name, max_epochs, gpus=1,
 
     callback_tqdm = TQDMProgressBar(refresh_rate=5)
     callback_lrmornitor = LearningRateMonitor(logging_interval="step")
+    
     plt_logger = TensorBoardLogger(
-        osp.join(root_log_dir, "tb_logs"), version=version
+        osp.join(root_log_dir, "tb_logs"),
     )
     
     if strategy is None:
@@ -70,7 +57,7 @@ def get_trainer(exp_name, max_epochs, gpus=1,
         max_epochs=max_epochs,
         strategy=strategy,
         callbacks=[callback_ckpt, callback_tqdm, callback_lrmornitor],
-        logger=plt_logger, **trainer_kwargs,
+        logger=plt_logger,
     )
     return trainer
 
