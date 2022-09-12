@@ -35,7 +35,7 @@ def plot_lr_step_schedule(fn, lr, num_epochs, num_steps_per_epoch):
     steps = num_epochs*num_steps_per_epoch
     for step in range(steps):
         lrs.append(fn(step)*lr)
-    print(f'{min(lrs)=:0.5f}, {max(lrs)=:0.5f}')
+    # print(f'{min(lrs)=:0.5f}, {max(lrs)=:0.5f}')
     plt.plot(range(steps), lrs)
     plt.show()
 
@@ -62,7 +62,7 @@ def fn_schedule_cosine_with_warmpup_decay_timm(num_epochs, num_steps_per_epoch, 
     num_cycles = num_epochs // num_epochs_per_cycle
     optim = torch.optim.SGD(nn.Linear(1, 1).parameters(), lr)
     m = 1 if interval == 'epoch' else num_steps_per_epoch
-    logger.info(f'{num_cycles=}')
+    logger.info(f'num_cycles={num_cycles}')
     schedule = CosineLRScheduler(optim,
                                  t_initial=num_epochs_per_cycle*m,
                                  lr_min=min_lr*lr,
