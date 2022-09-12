@@ -148,3 +148,4 @@ conda
 quarto-macos.pkg
 
 /.quarto/
+*.ckpt
