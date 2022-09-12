@@ -1,4 +1,7 @@
 from ple.lit_model import *
-from ple.loss import *
+try:
+    from ple.loss import *
+except Exception as e:
+    print(f'{e} while import loss')
 from ple.base_exp import *
 from ple.trainer import *
