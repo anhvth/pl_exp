@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['get_trainer', 'get_rank', 'get_exp_by_file', 'train']
 
-# %% ../nbs/05_trainer.ipynb 2
+# %% ../nbs/05_trainer.ipynb 3
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from pytorch_lightning.callbacks.progress import TQDMProgressBar
 from pytorch_lightning.loggers import TensorBoardLogger
@@ -20,7 +20,7 @@ def get_trainer(exp_name, max_epochs,
                 save_top_k=1, 
                 use_version=True, 
                 strategy=None,
-                refresh_rate=5):
+                refresh_rate=5, **kwargs):
     """ Example:
 
     """
@@ -57,11 +57,11 @@ def get_trainer(exp_name, max_epochs,
         max_epochs=max_epochs,
         strategy=strategy,
         callbacks=[callback_ckpt, callback_tqdm, callback_lrmornitor],
-        logger=plt_logger,
+        logger=plt_logger, **kwargs
     )
     return trainer
 
-# %% ../nbs/05_trainer.ipynb 4
+# %% ../nbs/05_trainer.ipynb 6
 import os
 import os.path as osp
 # # from argparse import ArgumentParser
@@ -101,7 +101,9 @@ def get_exp_by_file(exp_file):
         raise ImportError(
             "{} doesn't contains class named 'Exp'".format(exp_file))
 
-        
+
+
+# %% ../nbs/05_trainer.ipynb 8
 @call_parse
 def train(
     cfg_path:Param('Path to config'),

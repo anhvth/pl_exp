@@ -16,10 +16,67 @@ import pytorch_lightning as pl
 from torch.optim.lr_scheduler import _LRScheduler
 
 import os.path as osp
+from fastcore.all import *
 
 
 class BaseExp(metaclass=ABCMeta):
-    """Basic class for any experiment."""
+    """
+        import torch.utils.data as td
+        import pytorch_lightning as pl
+
+        class PLData(pl.LightningDataModule):
+            def __init__(self, **kwargs):
+                super().__init__()
+                store_attr()
+
+            def train_dataloader(self):
+                # dataset = 
+                return td.DataLoader(dataset, self.batch_size, num_workers=self.num_workers)
+
+            def val_dataloader(self):
+                # dataset = 
+                return td.DataLoader(dataset, self.batch_size, num_workers=self.num_workers)
+
+        class TriStageExp(BaseExp):
+
+            def __init__(self, exp_name='EXPNAME', 
+                         batch_size=64, 
+                         num_workers=2, 
+                         devices=2,
+                         strategy='dp', 
+                         **kwargs):
+                super().__init__()
+                store_attr(**kwargs)
+
+            def get_model(self):
+                dl = self.get_data_loader().train_dataloader()
+                sched = fn_schedule_cosine_with_warmpup_decay_timm(
+                    num_epochs=self.max_epochs,
+                    num_steps_per_epoch=len(dl)//self.devices,
+                    num_epochs_per_cycle=self.max_epochs//self.num_lr_cycles,
+                    min_lr=1/100,
+                    cycle_decay=0.7,
+                )
+                optim = lambda params:torch.optim.Adam(params)
+
+                return MyLit(self.model, create_optimizer_fn=optim,
+                                           create_lr_scheduler_fn=sched)
+
+            def get_data_loader(self):
+                return PLData(self.batch_size, num_workers=self.num_workers)
+
+            def get_trainer(self, **kwargs):
+                from ple.trainer import get_trainer
+                return get_trainer(self.exp_name, 
+                                      max_epochs=self.max_epochs, 
+                                      gpus=self.devices,
+                                   strategy=self.strategy,
+                                   **kwargs,
+
+                                  )
+            exp = TriStageExp( batch_size=10, exp_name='hi', devices=2)
+            print(exp)
+    """
 
     def __init__(self):
         # All hyper params should be listed here
