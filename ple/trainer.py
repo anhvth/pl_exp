@@ -13,42 +13,42 @@ from loguru import logger
 
 
 
-def get_trainer(exp_name, max_epochs, 
+def get_trainer(exp_name=None, max_epochs=None, 
                 gpus=1,
                 monitor=dict(metric="val_acc", mode="max"), 
                 save_every_n_epochs=1, 
                 save_top_k=1, 
                 use_version=True, 
                 strategy=None,
+                
                 refresh_rate=5, **kwargs):
-    """ Example:
+    callbacks = []
+    plt_logger = None
+    if exp_name is not None:
+        rld = osp.join("lightning_logs", exp_name)
+        cur_num_exps = len(os.listdir(rld)) if osp.exists(rld) else 0
+        version = f"{cur_num_exps:02d}"
+        filename = "{epoch}-{"+monitor["metric"]+":.2f}"
+        root_log_dir = osp.join("lightning_logs", exp_name, version)
+        logger.info(f'Log root dir: {root_log_dir}')
 
-    """
-    
-    
-    rld = osp.join("lightning_logs", exp_name)
-    cur_num_exps = len(os.listdir(rld)) if osp.exists(rld) else 0
-    version = f"{cur_num_exps:02d}"
-    filename = "{epoch}-{"+monitor["metric"]+":.2f}"
-    root_log_dir = osp.join("lightning_logs", exp_name, version)
-    logger.info(f'Log root dir: {root_log_dir}')
+        callback_ckpt = ModelCheckpoint(
+            dirpath=osp.join(root_log_dir, "ckpts"),
+            monitor=monitor['metric'], mode=monitor['mode'],
+            filename=filename,
+            save_last=True,
+            every_n_epochs=save_every_n_epochs,
+            save_top_k=save_top_k,
+        )
+        plt_logger = TensorBoardLogger(
+            osp.join(root_log_dir, "tb_logs"),
+        )
+        callbacks.append(callback_ckpt)
 
-    callback_ckpt = ModelCheckpoint(
-        dirpath=osp.join(root_log_dir, "ckpts"),
-        monitor=monitor['metric'], mode=monitor['mode'],
-        filename=filename,
-        save_last=True,
-        every_n_epochs=save_every_n_epochs,
-        save_top_k=save_top_k,
-    )
+    callbacks.append(TQDMProgressBar(refresh_rate=5))
+    callbacks.append(LearningRateMonitor(logging_interval="step"))
+    
 
-    callback_tqdm = TQDMProgressBar(refresh_rate=5)
-    callback_lrmornitor = LearningRateMonitor(logging_interval="step")
-    
-    plt_logger = TensorBoardLogger(
-        osp.join(root_log_dir, "tb_logs"),
-    )
-    
     if strategy is None:
         strategy="dp" if gpus < 2 else "ddp"
     trainer = Trainer(
@@ -56,12 +56,12 @@ def get_trainer(exp_name, max_epochs,
         devices=gpus,
         max_epochs=max_epochs,
         strategy=strategy,
-        callbacks=[callback_ckpt, callback_tqdm, callback_lrmornitor],
+        callbacks=callbacks,
         logger=plt_logger, **kwargs
     )
     return trainer
 
-# %% ../nbs/05_trainer.ipynb 6
+# %% ../nbs/05_trainer.ipynb 7
 import os
 import os.path as osp
 # # from argparse import ArgumentParser
@@ -103,7 +103,7 @@ def get_exp_by_file(exp_file):
 
 
 
-# %% ../nbs/05_trainer.ipynb 8
+# %% ../nbs/05_trainer.ipynb 9
 @call_parse
 def train(
     cfg_path:Param('Path to config'),
@@ -131,5 +131,4 @@ def train(
             out_path = osp.join(trainer.log_dir, osp.basename(cfg_path))
             logger.info('cp {} {}', cfg_path, out_path)
             shutil.copy(cfg_path, out_path)
-        
 
