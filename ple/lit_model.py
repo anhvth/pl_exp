@@ -21,7 +21,7 @@ try:
     from ple.loss import FocalLoss, BinaryFocalLoss
 except Exception as e:
     FocalLoss, BinaryFocalLoss = None, None
-    logger.warning('Exception: {}\nInstall mmcv-full if you wish to use FocalLoss', e)
+    # logger.warning('Exception: {}\nInstall mmcv-full if you wish to use FocalLoss', e)
 import os.path as osp
 from torch.optim.lr_scheduler import LambdaLR
 
@@ -84,23 +84,8 @@ def get_scheduler(optimizer, lr_schedule_fn, interval='step', verbose=False):
     return scheduler
 
 
-# %% ../nbs/01_lit_model.ipynb 9
+# %% ../nbs/01_lit_model.ipynb 10
 class LitModel(LightningModule):
-    """
-        Example code:
-            sched = fn_schedule_cosine_with_warmpup_decay_timm(
-                num_epochs=EPOCHS,
-                num_steps_per_epoch=len(dl_train),
-                num_epochs_per_cycle=EPOCHS//2,
-                min_lr=1/100,
-                cycle_decay=0.7,
-            )
-            # plot_lr_step_schedule(sche, lr, num_epochs, step_per_epoch)
-            optim = lambda params:torch.optim.Adam(params)
-            model = Model()
-            lit_lstm = LitModel(model,create_optimizer_fn=optim,
-                                           create_lr_scheduler_fn=sched, loss_fn=nn.L1Loss()            
-    """
     def __init__(self, model,
                  create_optimizer_fn=None,
                  create_lr_scheduler_fn=None,
