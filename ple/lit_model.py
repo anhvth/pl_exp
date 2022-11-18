@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['plot_lr_step_schedule', 'fn_schedule_linear_with_warmup', 'fn_schedule_cosine_with_warmpup_decay_timm',
-           'get_scheduler', 'LitModel']
+           'get_scheduler', 'print_example', 'LitModel']
 
 # %% ../nbs/01_lit_model.ipynb 4
 from loguru import logger
@@ -84,7 +84,59 @@ def get_scheduler(optimizer, lr_schedule_fn, interval='step', verbose=False):
     return scheduler
 
 
-# %% ../nbs/01_lit_model.ipynb 10
+# %% ../nbs/01_lit_model.ipynb 9
+def print_example():
+    str = """
+#---- HYPER
+EPOCHS = 30
+LR = 1e-4
+BZ = 8
+GPUS = 1
+NUM_WORKERS = 4            
+STRATEGY = 'dp'
+# --- INIT dataset
+train_ds = #
+val_ds = #
+
+dl_train = torch.utils.data.DataLoader(train_ds, BZ, num_workers=NUM_WORKERS, shuffle=True)
+dl_val = torch.utils.data.DataLoader(train_ds, BZ, num_workers=NUM_WORKERS, shuffle=False)
+# ---- Lr scheduler
+sched = fn_schedule_cosine_with_warmpup_decay_timm(
+    num_epochs=EPOCHS,
+    num_steps_per_epoch=len(dl_train),
+    num_epochs_per_cycle=EPOCHS//2,
+    min_lr=1/100,
+    cycle_decay=0.7,
+)
+# --- Optimizer
+optim = lambda params:torch.optim.Adam(params, lr=LR)
+
+# ---- LitModel
+class CustomLit(LitModel):
+    def forward(self, batch):
+        # Get loss
+
+    def training_step(self, batch, idx):
+        out = self.forward(batch)
+        return out['loss']
+
+    def validation_step(self, batch, idx):
+        out = self.forward(batch)
+        self.log('val/loss', out['loss'], prog_bar=True, on_epoch=True)
+
+lit = CustomLit(model,create_optimizer_fn=optim,
+                               create_lr_scheduler_fn=sched, loss_fn=nn.CrossEntropyLoss())    
+
+#---------------- Train
+
+trainer = get_trainer('trans_lit', EPOCHS, gpus=GPUS, overfit_batches=0.05,
+                     monitor={'metric': 'val/loss', 'mode': 'min'}, strategy=STRATEGY)
+trainer.fit(trans_lit, dl_train, dl_val)
+    """
+    print(str)
+
+
+# %% ../nbs/01_lit_model.ipynb 11
 class LitModel(LightningModule):
     def __init__(self, model,
                  create_optimizer_fn=None,
