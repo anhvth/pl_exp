@@ -96,4 +96,5 @@ d = { 'settings': { 'branch': 'main',
             'ple.trainer': { 'ple.trainer.get_exp_by_file': ('trainer.html#get_exp_by_file', 'ple/trainer.py'),
                              'ple.trainer.get_rank': ('trainer.html#get_rank', 'ple/trainer.py'),
                              'ple.trainer.get_trainer': ('trainer.html#get_trainer', 'ple/trainer.py'),
+                             'ple.trainer.is_interactive': ('trainer.html#is_interactive', 'ple/trainer.py'),
                              'ple.trainer.train': ('trainer.html#train', 'ple/trainer.py')}}}
