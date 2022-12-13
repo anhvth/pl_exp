@@ -80,6 +80,7 @@ def get_trainer(exp_name=None,
         max_epochs=max_epochs,
         strategy=strategy,
         callbacks=callbacks,
+        logevery_n_steps=10,
         logger=plt_logger, **kwargs
     )
     return trainer
