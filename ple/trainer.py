@@ -43,7 +43,7 @@ def get_trainer(exp_name=None,
             filename = "{epoch}_{"+metric+":0.4f}"
         
 
-        logger.info(f'Tensorboard: tensorboard --logdir {root_log_dir}')
+        # logger.info(f'Tensorboard: tensorboard --logdir {root_log_dir}')
 
         callback_ckpt = ModelCheckpoint(
             dirpath=osp.join(root_log_dir, "ckpts"),
@@ -80,7 +80,7 @@ def get_trainer(exp_name=None,
         max_epochs=max_epochs,
         strategy=strategy,
         callbacks=callbacks,
-        logevery_n_steps=10,
+        log_every_n_steps=10,
         logger=plt_logger, **kwargs
     )
     return trainer
