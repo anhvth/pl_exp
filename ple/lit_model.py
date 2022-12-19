@@ -21,7 +21,6 @@ try:
     from ple.loss import FocalLoss, BinaryFocalLoss
 except Exception as e:
     FocalLoss, BinaryFocalLoss = None, None
-    # logger.warning('Exception: {}\nInstall mmcv-full if you wish to use FocalLoss', e)
 import os.path as osp
 from torch.optim.lr_scheduler import LambdaLR
 

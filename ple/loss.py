@@ -10,7 +10,7 @@ import mmcv
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmcv.ops import sigmoid_focal_loss as _sigmoid_focal_loss
+
 
 
 def reduce_loss(loss, reduction):
@@ -139,6 +139,7 @@ def sigmoid_focal_loss(pred,
     """
     # Function.apply does not accept keyword arguments, so the decorator
     # "weighted_loss" is not applicable
+    from mmcv.ops import sigmoid_focal_loss as _sigmoid_focal_loss
     loss = _sigmoid_focal_loss(pred.contiguous(), target.contiguous(), gamma,
                                alpha, None, 'none')
     if weight is not None:
