@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 setup(
     name="fast_ple",
     py_modules=["ple"],
-    version="0.0.1",
+    version="0.0.5",
     description="",
     readme="README.md",
     python_requires=">=3.7",
