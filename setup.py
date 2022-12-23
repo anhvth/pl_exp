@@ -4,7 +4,7 @@ import pkg_resources
 from setuptools import find_packages, setup
 
 setup(
-    name="kmaker",
+    name="fast_ple",
     py_modules=["ple"],
     version="0.0.1",
     description="",
