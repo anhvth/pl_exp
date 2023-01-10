@@ -18,14 +18,12 @@ from pytorch_lightning.callbacks.progress import TQDMProgressBar
 from pytorch_lightning.loggers import TensorBoardLogger
 import torch
 
-
 def is_interactive():
     try:
         shell = get_ipython().__class__.__name__
         return True
     except:
         return False
-
 
 def get_trainer(exp_name=None,
                 max_epochs=None,
@@ -83,6 +81,9 @@ def get_trainer(exp_name=None,
             strategy = "ddp"
             logger.info(
                 "gpus={}, strategy=ddp, set strategy='dp' if this", gpus)
+    if 'strategy' == 'ddp':
+        from pytorch_lightning.strategies.ddp import DDPStrategy
+        strategy = DDPStrategy(find_unused_parameters=False)
 
     trainer = Trainer(
         accelerator=accelerator,
