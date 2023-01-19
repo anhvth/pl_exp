@@ -11,3 +11,4 @@ import torch.nn.functional as F
 from ple.base_exp import *
 from ple.datasets import *
 from ple.trainer import *
+from ple.lit_for_classification import *

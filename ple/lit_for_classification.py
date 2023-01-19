@@ -4,6 +4,8 @@ import torch
 from torch import nn
 from fastcore.all import store_attr
 
+__all__ = ['LitForClassification']
+
 class LitForClassification(pl.LightningModule):
     def __init__(self,
             model: nn.Module,
@@ -98,7 +100,7 @@ class LitForClassification(pl.LightningModule):
         all_x = self.all_gather(x)
         if op == 'cat':
             all_x = [x for x in all_x]
-            return op(all_x, dim=0)
+            return torch.cat(all_x)
         elif op == 'sum':
             return torch.sum(all_x, dim=0)
         elif op == 'mean':
