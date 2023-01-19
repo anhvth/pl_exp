@@ -1,12 +1,8 @@
-from ple.all import *
-from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision import transforms
-import timm
-from avcv.all import *
-
-
+from .lit_model import *
 import pytorch_lightning as pl
+import torch
+from torch import nn
+from fastcore.all import store_attr
 
 class LitForClassification(pl.LightningModule):
     def __init__(self,
@@ -73,38 +69,26 @@ class LitForClassification(pl.LightningModule):
 
     def training_step(self, batch, idx):
         out = self.forward(batch)
-        # Log lr to progress bar
         self.log('lr', self.trainer.optimizers[0].param_groups[0]['lr'], prog_bar=True, on_step=True, on_epoch=False, sync_dist=False)
         return out['loss']
 
     def validation_step(self, batch, idx):
         out_dict = self.forward(batch)
-        y_hat, y = out_dict['y_hat'], out_dict['y']
+        return out_dict
+    
+    def validation_epoch_end(self, outputs):
+        
+        y_hat = torch.cat([x['y_hat'] for x in outputs])
+        y = torch.cat([x['y'] for x in outputs])
 
         loss = self.loss_fn(y_hat, y)
         acc = (y_hat.argmax(dim=1) == y).float().mean()
+        
         loss = self.gather_and_reduce(loss, 'mean')
         acc = self.gather_and_reduce(acc, 'mean')
-        self.log('val_loss', loss, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True, sync_dist=False)
-        self.log('val_acc', acc, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True, sync_dist=False)
-        return out_dict
-    
-    # def validation_epoch_end(self, outputs):
-        
-    #     y_hat = torch.cat([x['y_hat'] for x in outputs])
-    #     y = torch.cat([x['y'] for x in outputs])
 
-    #     # y_hat = self.gather_and_reduce(y_hat)
-    #     # y = self.gather_and_reduce(y)
-
-    #     loss = self.loss_fn(y_hat, y)
-    #     acc = (y_hat.argmax(dim=1) == y).float().mean()
-        
-    #     loss = self.gather_and_reduce(loss, 'mean')
-    #     acc = self.gather_and_reduce(acc, 'mean')
-
-    #     self.log('val_loss', loss, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
-    #     self.log('val_acc', acc, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
+        self.log('val_loss', loss, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
+        self.log('val_acc', acc, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
 
     def gather_and_reduce(self, x, op='cat'):
         """
@@ -129,16 +113,3 @@ class LitForClassification(pl.LightningModule):
         sync_dist = sync_dist if sync_dist is not None else on_epoch
         super().log(name, value, rank_zero_only=rank_zero_only, prog_bar=prog_bar,
                     on_step=on_step, on_epoch=on_epoch, sync_dist=sync_dist)
-
-
-# Create a simple model for mnist
-model = timm.create_model('resnet18', pretrained=False, num_classes=10, in_chans=1)
-train_ds = MNIST(root='data', train=True, download=True, transform=transforms.ToTensor())
-val_ds = MNIST(root='data', train=False, download=True, transform=transforms.ToTensor())
-lit = LitForClassification(model, train_ds, val_ds, data_batch_size=128)
-                               
-#---------------- Train
-trainer = get_trainer('mnist', max_epochs=10, monitor=dict(metric="val_loss", mode="min"), strategy='ddp', gpus=2, overfit_batches=0., num_nodes=1)
-# trainer.fit(lit)
-trainer.validate(lit, ckpt_path='lightning_logs/mnist/01/ckpts/epoch=9_val_loss=0.3103.ckpt')
-

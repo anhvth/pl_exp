@@ -149,3 +149,4 @@ quarto-macos.pkg
 
 /.quarto/
 *.ckpt
+data/MNIST/

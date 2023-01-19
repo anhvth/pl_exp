@@ -2,7 +2,7 @@
 
 
 __all__ = ['Scheduler', 'CosineLRScheduler', 'plot_lr_step_schedule', 'fn_schedule_linear_with_warmup',
-           'fn_schedule_cosine_with_warmpup_decay_timm', 'get_scheduler', 'print_example', 'LitModel', 'collect_results_gpu']
+           'fn_schedule_cosine_with_warmpup_decay_timm', 'get_scheduler', 'print_example', 'LitModel']
 
 import os
 from datetime import datetime, timedelta
@@ -291,6 +291,9 @@ def fn_schedule_linear_with_warmup(num_epochs, num_steps_per_epoch,
 
 def fn_schedule_cosine_with_warmpup_decay_timm(num_epochs, num_steps_per_epoch, num_epochs_per_cycle,
                                                num_warmup_epochs=1, init_lr=0.4, min_lr=0.1, cycle_decay=.8, interval='step'):
+    """
+        Return: a function that takes a step and returns a lr
+    """
     lr = 1
     num_cycles = num_epochs // num_epochs_per_cycle
     optim = torch.optim.SGD(nn.Linear(1, 1).parameters(), lr)
@@ -367,46 +370,6 @@ trainer.fit(trans_lit, dl_train, dl_val)
     """
     print(str)
 
-def collect_results_gpu(result_part, size, rank, world_size):
-    """
-        Example: 
-        outputs = torch.stack(outputs).squeeze()
-        results = collect_results_gpu(outputs, 4, self.global_rank, self.trainer.world_size)
-        if self.global_rank == 0:
-            print(results)
-    """
-    import pickle
-    import torch.distributed as dist
-    # dump result part to tensor with pickle
-    part_tensor = torch.tensor(
-        bytearray(pickle.dumps(result_part)), dtype=torch.uint8, device='cuda')
-    # gather all result part tensor shape
-    shape_tensor = torch.tensor(part_tensor.shape, device='cuda')
-    shape_list = [shape_tensor.clone() for _ in range(world_size)]
-    dist.all_gather(shape_list, shape_tensor)
-    # padding result part tensor to max length
-    shape_max = torch.tensor(shape_list).max()
-    part_send = torch.zeros(shape_max, dtype=torch.uint8, device='cuda')
-    part_send[:shape_tensor[0]] = part_tensor
-    part_recv_list = [
-        part_tensor.new_zeros(shape_max) for _ in range(world_size)
-    ]
-    # gather all result part
-    dist.all_gather(part_recv_list, part_send)
-
-    if rank == 0:
-        part_list = []
-        for recv, shape in zip(part_recv_list, shape_list):
-            part_list.append(
-                pickle.loads(recv[:shape[0]].cpu().numpy().tobytes()))
-        # sort the results
-        ordered_results = []
-        for res in zip(*part_list):
-            ordered_results.extend(list(res))
-        # the dataloader may pad some samples
-        ordered_results = ordered_results[:size]
-        return ordered_results
-
 class LitModel(LightningModule):
     def __init__(self, model,
                  create_optimizer_fn=None,
@@ -430,13 +393,6 @@ class LitModel(LightningModule):
     def forward(self, x):
         return self.model(x)
 
-    def collect_results_gpu(self, result_part):
-        assert hasattr(result_part, 'len'), 'result_part must have len'
-        part_size = len(result_part)
-        part_size_all = collect_results_gpu(part_size, 8, self.global_rank, self.trainer.world_size)
-        part_size_all = sum(part_size_all)
-        return collect_results_gpu(result_part, part_size_all, self.global_rank, self.trainer.world_size)
-
     def log(self, name, value, rank_zero_only=True, prog_bar=True,
             on_step=False, on_epoch=True, sync_dist=True):
         super().log(name, value, rank_zero_only=rank_zero_only, prog_bar=prog_bar,
@@ -445,14 +401,18 @@ class LitModel(LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch[:2]
         logits = self(x)
-        loss = self.loss_fn(logits, y)
         preds = logits.softmax(1).argmax(1)
+        return dict(y=y, preds=preds)
+
+    def validation_epoch_end(self, outputs):
+        y = torch.cat([o['y'] for o in outputs])
+        preds = torch.cat([o['preds'] for o in outputs])
         accs = (y == preds).float().mean()
-        self.log("val_loss", loss, rank_zero_only=True, prog_bar=True,
-                 on_step=False, on_epoch=True)
-        self.log("val_acc", accs, rank_zero_only=True, prog_bar=True,
-                 on_step=False, on_epoch=True)
-        return loss
+        loss = self.loss_fn(preds, y)
+        self.log("validation_loss", loss, prog_bar=True, on_epoch=True)
+        self.log("validation_accuracy", accs, prog_bar=True, on_epoch=True)
+        
+
 
     def training_step(self, batch, batch_idx):
         x, y = batch[:2]
@@ -467,3 +427,4 @@ class LitModel(LightningModule):
         self.log("training_accuracy", accs, prog_bar=True,
                  rank_zero_only=True, on_epoch=True)
         return loss
+
