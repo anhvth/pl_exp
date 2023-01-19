@@ -32,7 +32,6 @@ class LitForClassification(pl.LightningModule):
         """
             Setup optimizer and scheduler
         """
-        assert self.train_dataset is not None
         #=========== Optimizer
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         #============ Scheduler
