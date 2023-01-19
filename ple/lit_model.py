@@ -2,7 +2,7 @@
 
 
 __all__ = ['Scheduler', 'CosineLRScheduler', 'plot_lr_step_schedule', 'fn_schedule_linear_with_warmup',
-           'fn_schedule_cosine_with_warmpup_decay_timm', 'get_scheduler', 'print_example', 'LitModel']
+           'fn_schedule_cosine_with_warmpup_decay_timm', 'get_scheduler', 'print_example', 'LitModel', 'collect_results_gpu']
 
 import os
 from datetime import datetime, timedelta
@@ -367,7 +367,45 @@ trainer.fit(trans_lit, dl_train, dl_val)
     """
     print(str)
 
+def collect_results_gpu(result_part, size, rank, world_size):
+    """
+        Example: 
+        outputs = torch.stack(outputs).squeeze()
+        results = collect_results_gpu(outputs, 4, self.global_rank, self.trainer.world_size)
+        if self.global_rank == 0:
+            print(results)
+    """
+    import pickle
+    import torch.distributed as dist
+    # dump result part to tensor with pickle
+    part_tensor = torch.tensor(
+        bytearray(pickle.dumps(result_part)), dtype=torch.uint8, device='cuda')
+    # gather all result part tensor shape
+    shape_tensor = torch.tensor(part_tensor.shape, device='cuda')
+    shape_list = [shape_tensor.clone() for _ in range(world_size)]
+    dist.all_gather(shape_list, shape_tensor)
+    # padding result part tensor to max length
+    shape_max = torch.tensor(shape_list).max()
+    part_send = torch.zeros(shape_max, dtype=torch.uint8, device='cuda')
+    part_send[:shape_tensor[0]] = part_tensor
+    part_recv_list = [
+        part_tensor.new_zeros(shape_max) for _ in range(world_size)
+    ]
+    # gather all result part
+    dist.all_gather(part_recv_list, part_send)
 
+    if rank == 0:
+        part_list = []
+        for recv, shape in zip(part_recv_list, shape_list):
+            part_list.append(
+                pickle.loads(recv[:shape[0]].cpu().numpy().tobytes()))
+        # sort the results
+        ordered_results = []
+        for res in zip(*part_list):
+            ordered_results.extend(list(res))
+        # the dataloader may pad some samples
+        ordered_results = ordered_results[:size]
+        return ordered_results
 
 class LitModel(LightningModule):
     def __init__(self, model,
@@ -391,6 +429,13 @@ class LitModel(LightningModule):
 
     def forward(self, x):
         return self.model(x)
+
+    def collect_results_gpu(self, result_part):
+        assert hasattr(result_part, 'len'), 'result_part must have len'
+        part_size = len(result_part)
+        part_size_all = collect_results_gpu(part_size, 8, self.global_rank, self.trainer.world_size)
+        part_size_all = sum(part_size_all)
+        return collect_results_gpu(result_part, part_size_all, self.global_rank, self.trainer.world_size)
 
     def log(self, name, value, rank_zero_only=True, prog_bar=True,
             on_step=False, on_epoch=True, sync_dist=True):
