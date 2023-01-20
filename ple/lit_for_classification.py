@@ -27,6 +27,29 @@ class LitForClassification(pl.LightningModule):
         """
         super().__init__()
         store_attr()
+                    
+    def on_train_start(self):
+        """
+            Setup datasets
+        """
+        def is_param(v):
+            return isinstance(v, (int, float, str, bool))
+        lit_params = {k:v for k, v in self.__dict__.items() if is_param(v)}
+        train_params = {}
+        for k, v in self.trainer.__dict__.items():
+            if is_param(v):
+                train_params[k] = v
+        self.logger.log_hyperparams(dict(
+            lit_params=lit_params,
+            train_params=train_params,
+        ))
+        if self.global_rank == 0:
+            # Print using table
+            from tabulate import tabulate
+            print("LitForClassification params:")
+            print(tabulate(lit_params.items(), headers=["Param", "Value"]))
+            print("Trainer params:")
+            print(tabulate(train_params.items(), headers=["Param", "Value"]))
 
     def configure_optimizers(self):
         """
