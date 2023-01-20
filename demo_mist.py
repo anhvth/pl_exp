@@ -29,7 +29,22 @@ class LitForClassification(pl.LightningModule):
         """
         super().__init__()
         store_attr()
-
+    def on_train_start(self):
+        """
+            Setup datasets
+        """
+        def is_param(v):
+            return isinstance(v, (int, float, str, bool))
+        lit_params = {k:v for k, v in self.__dict__.items() if is_param(v)}
+        train_params = {}
+        for k, v in self.trainer.__dict__.items():
+            if is_param(v):
+                train_params[k] = v
+        self.logger.log_hyperparams(dict(
+            lit_params=lit_params,
+            train_params=train_params,
+        ))
+        
     def configure_optimizers(self):
         """
             Setup optimizer and scheduler
@@ -89,23 +104,6 @@ class LitForClassification(pl.LightningModule):
         self.log('val_acc', acc, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True, sync_dist=False)
         return out_dict
     
-    # def validation_epoch_end(self, outputs):
-        
-    #     y_hat = torch.cat([x['y_hat'] for x in outputs])
-    #     y = torch.cat([x['y'] for x in outputs])
-
-    #     # y_hat = self.gather_and_reduce(y_hat)
-    #     # y = self.gather_and_reduce(y)
-
-    #     loss = self.loss_fn(y_hat, y)
-    #     acc = (y_hat.argmax(dim=1) == y).float().mean()
-        
-    #     loss = self.gather_and_reduce(loss, 'mean')
-    #     acc = self.gather_and_reduce(acc, 'mean')
-
-    #     self.log('val_loss', loss, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
-    #     self.log('val_acc', acc, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
-
     def gather_and_reduce(self, x, op='cat'):
         """
             
@@ -138,7 +136,7 @@ val_ds = MNIST(root='data', train=False, download=True, transform=transforms.ToT
 lit = LitForClassification(model, train_ds, val_ds, data_batch_size=128)
                                
 #---------------- Train
-trainer = get_trainer('mnist', max_epochs=10, monitor=dict(metric="val_loss", mode="min"), strategy='ddp', gpus=2, overfit_batches=0., num_nodes=1)
-# trainer.fit(lit)
-trainer.validate(lit, ckpt_path='lightning_logs/mnist/01/ckpts/epoch=9_val_loss=0.3103.ckpt')
+trainer = get_trainer('mnist', max_epochs=10, monitor=dict(metric="val_loss", mode="min"), strategy='ddp', gpus=1, overfit_batches=0., num_nodes=1)
+trainer.fit(lit)
+# trainer.validate(lit, ckpt_path='lightning_logs/mnist/01/ckpts/epoch=9_val_loss=0.3103.ckpt')
 

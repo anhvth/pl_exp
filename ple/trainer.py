@@ -54,7 +54,7 @@ def get_trainer(exp_name=None,
             filename = "{epoch}_{"+monitor["metric"]+":0.4f}"
 
         callback_ckpt = ModelCheckpoint(
-            dirpath=osp.join(root_log_dir, "ckpts"),
+            dirpath=osp.join(root_log_dir),
             monitor=monitor['metric'] if monitor is not None else None,
             mode=monitor['mode'] if monitor is not None else 'min',
             filename=filename,
@@ -62,8 +62,14 @@ def get_trainer(exp_name=None,
             every_n_epochs=save_every_n_epochs,
             save_top_k=save_top_k,
         )
-        plt_logger = TensorBoardLogger(
-            osp.join(root_log_dir, "tb_logs"),
+        class CustomTensorBoardLogger(TensorBoardLogger):
+            @property
+            def log_dir(self):
+                ld = super().log_dir
+                return ld.split('/version')[0]
+
+        plt_logger = CustomTensorBoardLogger(
+            osp.join(root_log_dir),
         )
         callbacks.append(callback_ckpt)
 
@@ -84,7 +90,6 @@ def get_trainer(exp_name=None,
     if 'strategy' == 'ddp':
         from pytorch_lightning.strategies.ddp import DDPStrategy
         strategy = DDPStrategy(find_unused_parameters=False)
-
     trainer = Trainer(
         accelerator=accelerator,
         devices=gpus,
