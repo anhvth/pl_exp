@@ -10,7 +10,7 @@ class LitForClassification(pl.LightningModule):
     def __init__(self,
             model: nn.Module,
             train_dataset=None, val_dataset=None, predict_dataset=None,
-            data_num_workers=4, data_batch_size=64, 
+            data_num_workers=4, data_batch_size=None, 
             loss_fn=nn.CrossEntropyLoss(),        
             lr_num_cycles=3, lr_min=1/100, lr_cycle_decay=0.3, lr_update_interval='step', lr=1e-3,
             ):
@@ -37,7 +37,7 @@ class LitForClassification(pl.LightningModule):
         lit_params = {k:v for k, v in self.__dict__.items() if is_param(v)}
         train_params = {}
         for k, v in self.trainer.__dict__.items():
-            if is_param(v):
+            if is_param(v) and not k.startswith('_'):
                 train_params[k] = v
         self.logger.log_hyperparams(dict(
             lit_params=lit_params,
@@ -46,10 +46,11 @@ class LitForClassification(pl.LightningModule):
         if self.global_rank == 0:
             # Print using table
             from tabulate import tabulate
-            print("LitForClassification params:")
-            print(tabulate(lit_params.items(), headers=["Param", "Value"]))
-            print("Trainer params:")
-            print(tabulate(train_params.items(), headers=["Param", "Value"]))
+            cmd = "LitForClassification params:"+'\n'
+            cmd += tabulate(lit_params.items(), headers=["Param", "Value"])+'\n'
+            cmd += "Trainer params:"+'\n'
+            cmd += tabulate(train_params.items(), headers=["Param", "Value"])
+            print(cmd)
 
     def configure_optimizers(self):
         """
@@ -59,7 +60,6 @@ class LitForClassification(pl.LightningModule):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         #============ Scheduler
         num_epochs = self.trainer.max_epochs
-        
         fn_step_to_lr = fn_schedule_cosine_with_warmpup_decay_timm(
             num_epochs=num_epochs,
             num_steps_per_epoch=len(self.train_dataloader())//self.trainer.world_size,
@@ -70,7 +70,22 @@ class LitForClassification(pl.LightningModule):
         )
         
         scheduler = get_scheduler(optimizer, fn_step_to_lr, interval=self.lr_update_interval)
+        if self.global_rank == 0:
+            logger.info(f'{num_epochs=}, {len(self.train_dataloader())=}, {self.trainer.world_size=}, {num_epochs//self.lr_num_cycles=}, {self.lr_min=}, {self.lr_cycle_decay=}, {self.lr_update_interval=}')
+            self.plot_lr(fn_step_to_lr)
         return [optimizer], [scheduler]
+
+    def plot_lr(self, fn_step_to_lr):
+        """
+            Plot lr
+        """
+        num_epochs = self.trainer.max_epochs
+        num_steps_per_epoch = len(self.train_dataloader())//self.trainer.world_size
+        num_steps = num_epochs*num_steps_per_epoch
+        lrs = [fn_step_to_lr(i) for i in range(num_steps)]
+        plt.plot(lrs)
+        mmcv.mkdir_or_exist(self.logger.log_dir)
+        plt.savefig(f'{self.logger.log_dir}/lr.png')
 
     def train_dataloader(self):
         assert self.train_dataset is not None
