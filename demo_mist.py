@@ -54,7 +54,6 @@ class LitForClassification(pl.LightningModule):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         #============ Scheduler
         num_epochs = self.trainer.max_epochs
-        
         fn_step_to_lr = fn_schedule_cosine_with_warmpup_decay_timm(
             num_epochs=num_epochs,
             num_steps_per_epoch=len(self.train_dataloader())//self.trainer.world_size,
@@ -65,7 +64,22 @@ class LitForClassification(pl.LightningModule):
         )
         
         scheduler = get_scheduler(optimizer, fn_step_to_lr, interval=self.lr_update_interval)
+        if self.global_rank == 0:
+            logger.info(f'{num_epochs=}, {len(self.train_dataloader())=}, {self.trainer.world_size=}, {num_epochs//self.lr_num_cycles=}, {self.lr_min=}, {self.lr_cycle_decay=}, {self.lr_update_interval=}')
+            self.plot_lr(fn_step_to_lr)
         return [optimizer], [scheduler]
+
+    def plot_lr(self, fn_step_to_lr):
+        """
+            Plot lr
+        """
+        num_epochs = self.trainer.max_epochs
+        num_steps_per_epoch = len(self.train_dataloader())//self.trainer.world_size
+        num_steps = num_epochs*num_steps_per_epoch
+        lrs = [fn_step_to_lr(i) for i in range(num_steps)]
+        plt.plot(lrs)
+        mmcv.mkdir_or_exist(self.logger.log_dir)
+        plt.savefig(f'{self.logger.log_dir}/lr.png')
 
     def train_dataloader(self):
         assert self.train_dataset is not None
@@ -131,12 +145,14 @@ class LitForClassification(pl.LightningModule):
 
 # Create a simple model for mnist
 model = timm.create_model('resnet18', pretrained=False, num_classes=10, in_chans=1)
+
 train_ds = MNIST(root='data', train=True, download=True, transform=transforms.ToTensor())
 val_ds = MNIST(root='data', train=False, download=True, transform=transforms.ToTensor())
-lit = LitForClassification(model, train_ds, val_ds, data_batch_size=128)
+lit = LitForClassification(model, train_ds, val_ds, data_batch_size=512, lr_num_cycles=2, data_num_workers=4)
                                
 #---------------- Train
-trainer = get_trainer('mnist', max_epochs=10, monitor=dict(metric="val_loss", mode="min"), strategy='ddp', gpus=1, overfit_batches=0., num_nodes=1)
+trainer = get_trainer('mnist', max_epochs=4, monitor=dict(metric="val_loss", mode="min"),
+                strategy='ddp', gpus=2, overfit_batches=0., num_nodes=1)
 trainer.fit(lit)
 # trainer.validate(lit, ckpt_path='lightning_logs/mnist/01/ckpts/epoch=9_val_loss=0.3103.ckpt')
 
