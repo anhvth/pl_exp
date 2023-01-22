@@ -39,10 +39,12 @@ class LitForClassification(pl.LightningModule):
         for k, v in self.trainer.__dict__.items():
             if is_param(v) and not k.startswith('_'):
                 train_params[k] = v
-        self.logger.log_hyperparams(dict(
-            lit_params=lit_params,
-            train_params=train_params,
-        ))
+
+        self.logger.hparams = dict(
+                lit_params=lit_params,
+                train_params=train_params,
+            )
+        # Log hyperparameters
         if self.global_rank == 0:
             # Print using table
             from tabulate import tabulate
@@ -50,8 +52,7 @@ class LitForClassification(pl.LightningModule):
             cmd += tabulate(lit_params.items(), headers=["Param", "Value"])+'\n'
             cmd += "Trainer params:"+'\n'
             cmd += tabulate(train_params.items(), headers=["Param", "Value"])
-            print(cmd)
-
+            
     def configure_optimizers(self):
         """
             Setup optimizer and scheduler
@@ -71,7 +72,6 @@ class LitForClassification(pl.LightningModule):
         
         scheduler = get_scheduler(optimizer, fn_step_to_lr, interval=self.lr_update_interval)
         if self.global_rank == 0:
-            logger.info(f'{num_epochs=}, {len(self.train_dataloader())=}, {self.trainer.world_size=}, {num_epochs//self.lr_num_cycles=}, {self.lr_min=}, {self.lr_cycle_decay=}, {self.lr_update_interval=}')
             self.plot_lr(fn_step_to_lr)
         return [optimizer], [scheduler]
 
@@ -79,6 +79,8 @@ class LitForClassification(pl.LightningModule):
         """
             Plot lr
         """
+        import matplotlib.pyplot as plt
+        import mmcv
         num_epochs = self.trainer.max_epochs
         num_steps_per_epoch = len(self.train_dataloader())//self.trainer.world_size
         num_steps = num_epochs*num_steps_per_epoch
