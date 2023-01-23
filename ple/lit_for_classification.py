@@ -39,7 +39,7 @@ class LitForClassification(pl.LightningModule):
 
 
     @property
-    def num_update_step_per_epoch(self):
+    def num_update_per_epoch(self):
         return  len(self.train_dataloader())//(self.trainer.world_size*self.trainer.accumulate_grad_batches)
                     
     def on_train_start(self):
