@@ -82,7 +82,7 @@ class LitForClassification(pl.LightningModule):
         import matplotlib.pyplot as plt
         import mmcv
         num_epochs = self.trainer.max_epochs
-        num_steps_per_epoch = len(self.train_dataloader())//self.trainer.world_size
+        num_steps_per_epoch = len(self.train_dataloader())//self.trainer.world_size if self.lr_update_interval == 'step' else 1
         num_steps = num_epochs*num_steps_per_epoch
         lrs = [fn_step_to_lr(i) for i in range(num_steps)]
         plt.plot(lrs)
