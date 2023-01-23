@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 import torch
 from torch import nn
 from fastcore.all import store_attr
-
+from loguru import logger
 __all__ = ['LitForClassification']
 
 class LitForClassification(pl.LightningModule):
@@ -27,6 +27,20 @@ class LitForClassification(pl.LightningModule):
         """
         super().__init__()
         store_attr()
+        
+    def print(self, *args, **kwargs):
+        if self.global_rank == 0:
+            
+            logger.info(*args, **kwargs)
+
+    def warning(self, *args, **kwargs):
+        if self.global_rank == 0:
+            logger.warning(*args, **kwargs)
+
+
+    @property
+    def num_update_step_per_epoch(self):
+        return  len(self.train_dataloader())//(self.trainer.world_size*self.trainer.accumulate_grad_batches)
                     
     def on_train_start(self):
         """
@@ -52,7 +66,6 @@ class LitForClassification(pl.LightningModule):
             cmd += tabulate(lit_params.items(), headers=["Param", "Value"])+'\n'
             cmd += "Trainer params:"+'\n'
             cmd += tabulate(train_params.items(), headers=["Param", "Value"])
-            # 
             import json, os
             json.dump(hparams, open(os.path.join(self.logger.log_dir, 'params.json'), 'w'))
             # self.logger.log_hyperparams(hparams)
@@ -83,15 +96,16 @@ class LitForClassification(pl.LightningModule):
         """
             Plot lr
         """
-        import matplotlib.pyplot as plt
-        import mmcv
-        num_epochs = self.trainer.max_epochs
-        num_steps_per_epoch = len(self.train_dataloader())//self.trainer.world_size if self.lr_update_interval == 'step' else 1
-        num_steps = num_epochs*num_steps_per_epoch
-        lrs = [fn_step_to_lr(i) for i in range(num_steps)]
-        plt.plot(lrs)
-        mmcv.mkdir_or_exist(self.logger.log_dir)
-        plt.savefig(f'{self.logger.log_dir}/lr.png')
+        if self.global_rank == 0:
+            import matplotlib.pyplot as plt
+            import mmcv
+            num_epochs = self.trainer.max_epochs
+            num_steps_per_epoch = len(self.train_dataloader())//self.trainer.world_size if self.lr_update_interval == 'step' else 1
+            num_steps = num_epochs*num_steps_per_epoch
+            lrs = [fn_step_to_lr(i) for i in range(num_steps)]
+            plt.plot(lrs)
+            mmcv.mkdir_or_exist(self.logger.log_dir)
+            plt.savefig(f'{self.logger.log_dir}/lr.png')
 
     def train_dataloader(self):
         assert self.train_dataset is not None
