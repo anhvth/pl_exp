@@ -40,7 +40,7 @@ class LitForClassification(pl.LightningModule):
             if is_param(v) and not k.startswith('_'):
                 train_params[k] = v
 
-        self.logger.hparams = dict(
+        hparams = dict(
                 lit_params=lit_params,
                 train_params=train_params,
             )
@@ -52,6 +52,7 @@ class LitForClassification(pl.LightningModule):
             cmd += tabulate(lit_params.items(), headers=["Param", "Value"])+'\n'
             cmd += "Trainer params:"+'\n'
             cmd += tabulate(train_params.items(), headers=["Param", "Value"])
+            self.logger.log_hyperparams(hparams)
             
     def configure_optimizers(self):
         """
