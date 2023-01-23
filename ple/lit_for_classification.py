@@ -52,7 +52,10 @@ class LitForClassification(pl.LightningModule):
             cmd += tabulate(lit_params.items(), headers=["Param", "Value"])+'\n'
             cmd += "Trainer params:"+'\n'
             cmd += tabulate(train_params.items(), headers=["Param", "Value"])
-            self.logger.log_hyperparams(hparams)
+            # 
+            import json, os
+            json.dump(hparams, open(os.path.join(self.logger.log_dir, 'params.json'), 'w'))
+            # self.logger.log_hyperparams(hparams)
             
     def configure_optimizers(self):
         """
