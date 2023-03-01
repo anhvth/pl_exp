@@ -28,7 +28,7 @@ def is_interactive():
 def get_trainer(exp_name=None,
                 max_epochs=None,
                 gpus=1,
-                monitor=dict(metric="val/loss", mode="min"),
+                monitor=dict(metric="val_loss", mode="min"),
                 save_every_n_epochs=1,
                 save_top_k=1,
                 strategy=None,
