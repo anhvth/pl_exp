@@ -366,7 +366,7 @@ lit = CustomLit(model,create_optimizer_fn=optim,
 
 trainer = get_trainer('trans_lit', EPOCHS, gpus=GPUS, overfit_batches=0.05,
                      monitor={'metric': 'val/loss', 'mode': 'min'}, strategy=STRATEGY)
-trainer.fit(trans_lit, dl_train, dl_val)
+trainer.fit(lit, dl_train, dl_val)
     """
     print(str)
 
@@ -394,9 +394,9 @@ class LitModel(LightningModule):
         return self.model(x)
 
     def log(self, name, value, rank_zero_only=True, prog_bar=True,
-            on_step=False, on_epoch=True, sync_dist=True):
+            on_step=False, on_epoch=True, sync_dist=True, **kwargs):
         super().log(name, value, rank_zero_only=rank_zero_only, prog_bar=prog_bar,
-                    on_step=on_step, on_epoch=on_epoch, sync_dist=sync_dist)
+                    on_step=on_step, on_epoch=on_epoch, sync_dist=sync_dist, **kwargs)
 
     def validation_step(self, batch, batch_idx):
         x, y = batch[:2]
@@ -404,13 +404,13 @@ class LitModel(LightningModule):
         preds = logits.softmax(1).argmax(1)
         return dict(y=y, preds=preds)
 
-    def validation_epoch_end(self, outputs):
-        y = torch.cat([o['y'] for o in outputs])
-        preds = torch.cat([o['preds'] for o in outputs])
-        accs = (y == preds).float().mean()
-        loss = self.loss_fn(preds, y)
-        self.log("validation_loss", loss, prog_bar=True, on_epoch=True)
-        self.log("validation_accuracy", accs, prog_bar=True, on_epoch=True)
+    # def validation_epoch_end(self, outputs):
+    #     y = torch.cat([o['y'] for o in outputs])
+    #     preds = torch.cat([o['preds'] for o in outputs])
+    #     accs = (y == preds).float().mean()
+    #     loss = self.loss_fn(preds, y)
+    #     self.log("validation_loss", loss, prog_bar=True, on_epoch=True)
+    #     self.log("validation_accuracy", accs, prog_bar=True, on_epoch=True)
         
 
 
