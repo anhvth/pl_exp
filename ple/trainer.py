@@ -31,7 +31,7 @@ def get_trainer(exp_name=None,
                 monitor=dict(metric="val_loss", mode="min"),
                 save_every_n_epochs=1,
                 save_top_k=1,
-                strategy=None,
+                strategy='auto',
                 accelerator='gpu',
                 refresh_rate=5,
                 **kwargs):

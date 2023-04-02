@@ -135,19 +135,19 @@ class LitForClassification(pl.LightningModule):
         out_dict = self.forward(batch)
         return out_dict
     
-    def validation_epoch_end(self, outputs):
+    # def on_validation_epoch_end(self, outputs):
         
-        y_hat = torch.cat([x['y_hat'] for x in outputs])
-        y = torch.cat([x['y'] for x in outputs])
+    #     y_hat = torch.cat([x['y_hat'] for x in outputs])
+    #     y = torch.cat([x['y'] for x in outputs])
 
-        loss = self.loss_fn(y_hat, y)
-        acc = (y_hat.argmax(dim=1) == y).float().mean()
+    #     loss = self.loss_fn(y_hat, y)
+    #     acc = (y_hat.argmax(dim=1) == y).float().mean()
         
-        loss = self.gather_and_reduce(loss, 'mean')
-        acc = self.gather_and_reduce(acc, 'mean')
+    #     loss = self.gather_and_reduce(loss, 'mean')
+    #     acc = self.gather_and_reduce(acc, 'mean')
 
-        self.log('val_loss', loss, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
-        self.log('val_acc', acc, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
+    #     self.log('val_loss', loss, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
+    #     self.log('val_acc', acc, rank_zero_only=True, prog_bar=True, on_step=False, on_epoch=True)
 
     def gather_and_reduce(self, x, op='cat'):
         """
@@ -172,3 +172,35 @@ class LitForClassification(pl.LightningModule):
         sync_dist = sync_dist if sync_dist is not None else on_epoch
         super().log(name, value, rank_zero_only=rank_zero_only, prog_bar=prog_bar,
                     on_step=on_step, on_epoch=on_epoch, sync_dist=sync_dist)
+
+
+import mmcv, tqdm, os
+from glob import glob
+import os.path as osp
+class LitPredict(LitModel):
+    """
+    Example code:
+        trainer = get_trainer('test', strategy='ddp_notebook', gpus=8)
+        dl = td.DataLoader(ds, 32, num_workers=4)
+        out = trainer.predict(LitPredict(model), dl)
+    """
+    CACHE_DIR = '.cache/tmp_lit_predict/'
+    
+    def predict_step(self, batch, idx):
+        import mmcv
+        assert 'index' in batch, 'make sure to store sample index in batch __getitem__(self, idx)-> dict(idx=idx...)'
+        out = self.model(batch['x']).cpu().numpy()
+        for index, o in zip(batch['index'], out):
+            out_file = osp.join(self.CACHE_DIR, f'{index:06d}.pkl')
+            mmcv.dump(o, out_file)
+            
+    def on_predict_epoch_end(self):
+
+        paths = list(sorted(glob(osp.join(self.CACHE_DIR, '*.pkl'))))
+        print('Loading result from dump')
+        results = [mmcv.load(p) for p in tqdm(paths)]
+        ans_remove = input(f'Would you like to remove {self.CACHE_DIR} y/n')
+        if ans_remove == 'y':
+            os.system(f'rm -r {self.CACHE_DIR}')
+        
+        return results
