@@ -78,11 +78,11 @@ def get_trainer(exp_name=None,
 
     if strategy is None:
         if is_interactive():
-            logger.info("gpus={}, Interactive mode, force strategy=dp", gpus)
-            strategy = 'dp'
+            logger.info("gpus={}, Interactive mode, force strategy=auto", gpus)
+            strategy = 'auto'
         elif gpus < 2:
             logger.info("gpus={}, , force strategy=dp", gpus)
-            strategy = 'dp'
+            strategy = 'auto'
         else:
             strategy = "ddp"
             logger.info(
