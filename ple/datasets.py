@@ -34,7 +34,7 @@ class VideoFrameDataset(td.Dataset):
         if not self.check_if_extracted(path_to_video):
             _im = mmcv.imrescale(self.video[0], self.img_size)
             im_h, im_w = _im.shape[:2]
-            mmcv.mkdir_or_exist(self.out_dir)
+            mkdir(self.out_dir)
             cmd = f"ffmpeg -n  -i {path_to_video} -s {im_w}x{im_h} -vf fps={self.fps} {self.out_dir}/%06d.{self.ext}"
             print(cmd)
             os.system(cmd)

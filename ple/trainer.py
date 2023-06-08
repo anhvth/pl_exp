@@ -34,7 +34,7 @@ def get_trainer(exp_name=None,
                 strategy='auto',
                 accelerator='gpu',
                 refresh_rate=5,
-                **kwargs):
+                **kwargs)->Trainer:
     if not torch.cuda.is_available():
         gpus = 1
         accelerator = 'cpu'

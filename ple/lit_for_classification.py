@@ -4,6 +4,7 @@ import torch
 from torch import nn
 from fastcore.all import store_attr
 from loguru import logger
+from avcv.utils import mkdir
 __all__ = ['LitForClassification']
 
 class LitForClassification(pl.LightningModule):
@@ -104,7 +105,7 @@ class LitForClassification(pl.LightningModule):
             num_steps = num_epochs*num_steps_per_epoch
             lrs = [fn_step_to_lr(i) for i in range(num_steps)]
             plt.plot(lrs)
-            mmcv.mkdir_or_exist(self.logger.log_dir)
+            mkdir(self.logger.log_dir)
             plt.savefig(f'{self.logger.log_dir}/lr.png')
 
     def train_dataloader(self):
