@@ -1,0 +1,3 @@
+pytorch_lightning==2.0.9
+transformers
+tabulate

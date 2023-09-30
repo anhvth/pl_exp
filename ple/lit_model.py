@@ -290,7 +290,7 @@ def fn_schedule_linear_with_warmup(num_epochs, num_steps_per_epoch,
 
 
 def fn_schedule_cosine_with_warmpup_decay_timm(num_epochs, num_steps_per_epoch, num_epochs_per_cycle,
-                                               num_warmup_epochs=1, init_lr=0.4, min_lr=0.1, cycle_decay=.8, interval='step'):
+                                               num_warmup_epochs=1., init_lr=0.4, min_lr=0.1, cycle_decay=.8, interval='step'):
     """
         Return: a function that takes a step and returns a lr
     """
@@ -303,7 +303,7 @@ def fn_schedule_cosine_with_warmpup_decay_timm(num_epochs, num_steps_per_epoch, 
                                  t_initial=num_epochs_per_cycle*m,
                                  lr_min=min_lr*lr,
                                  cycle_decay=cycle_decay,
-                                 cycle_limit=num_cycles, warmup_t=num_warmup_epochs*m, warmup_lr_init=init_lr*lr,
+                                 cycle_limit=num_cycles, warmup_t=int(num_warmup_epochs*m), warmup_lr_init=init_lr*lr,
                                  )
 
     def get_lr(step): return schedule._get_lr(step)[0]
@@ -378,7 +378,11 @@ class LitModel(LightningModule):
                  ):
 
         super().__init__()
-        store_attr()
+        self.model = model
+        self.loss_fn = loss_fn
+        # Optional functions to create optimizer and learning rate scheduler
+        self.create_optimizer_fn = create_optimizer_fn
+        self.create_lr_scheduler_fn = create_lr_scheduler_fn
 
     def configure_optimizers(self):
         """

@@ -29,12 +29,18 @@ def get_trainer(exp_name=None,
                 max_epochs=None,
                 gpus=1,
                 monitor=dict(metric="val_loss", mode="min"),
-                save_every_n_epochs=1,
-                save_top_k=1,
                 strategy='auto',
                 accelerator='gpu',
                 refresh_rate=5,
-                **kwargs)->Trainer:
+                save_kwargs={},
+                save_kwargs_default={'save_last':True, 
+                             'save_top_k':-1, 
+                             'every_n_epochs':1,
+                             'every_n_train_steps':None,
+                             },
+                **kwargs, 
+                )->Trainer:
+    save_kwargs_default.update(save_kwargs)
     if not torch.cuda.is_available():
         gpus = 1
         accelerator = 'cpu'
@@ -58,9 +64,7 @@ def get_trainer(exp_name=None,
             monitor=monitor['metric'] if monitor is not None else None,
             mode=monitor['mode'] if monitor is not None else 'min',
             filename=filename,
-            save_last=True,
-            every_n_epochs=save_every_n_epochs,
-            save_top_k=save_top_k,
+            **save_kwargs_default
         )
         class CustomTensorBoardLogger(TensorBoardLogger):
             @property
