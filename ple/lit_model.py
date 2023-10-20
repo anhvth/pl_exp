@@ -9,7 +9,6 @@ __all__ = [
     # "_lr_function_by_epoch",
     # "_get_scheduler",
     "print_example",
-    "LitModel",
     "AbstractLitModel",
     # "_lr_function_by_step",
 ]
@@ -98,7 +97,6 @@ class AbstractLitModel(LightningModule):
     def __init__(
         self,
         model,
-        lr=None,
         loss_fn=nn.CrossEntropyLoss(),
         optim=None,
         num_epochs=None,
@@ -108,7 +106,6 @@ class AbstractLitModel(LightningModule):
         super().__init__()
         self.model = model
         self.loss_fn = loss_fn
-        self.lr = lr
         self.optim_func = None
         self.grad_accumulate_steps = grad_accumulate_steps
         self.optim = optim

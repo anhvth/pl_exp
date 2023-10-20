@@ -23,12 +23,12 @@ def is_interactive():
 
 def get_trainer(
     exp_name=None,
-    num_epochs=None,
+    max_epochs=None,
     num_gpus=1,
     monitor=dict(metric="val_loss", mode="min"),
     strategy="auto",
     accelerator="gpu",
-    refresh_rate=5,
+    refresh_rate=10,
     save_kwargs={},
     save_kwargs_default={
         "save_last": True,
@@ -73,24 +73,6 @@ def get_trainer(
     callbacks.append(TQDMProgressBar(refresh_rate=refresh_rate))
     callbacks.append(LearningRateMonitor(logging_interval="step"))
     callbacks.append(ThroughputLogger())
-
-    # LR callback
-    # if grad_accumulate_steps is not None and train_loader is not None:
-    #     callbacks.append(
-    #         create_cosine_scheduler_callback(
-    #             train_loader=train_loader,
-    #             num_epochs=num_epochs,
-    #             num_gpus=num_gpus if isinstance(num_gpus, int) else len(num_gpus),
-    #             grad_accumulate_steps=grad_accumulate_steps,
-    #             training_method=strategy
-    #         )
-    #     )
-
-    # else:
-    #     logger.info(
-    #         "To create cosine sched lr please set `grad_accumulate_steps` and `train_loader`"
-    #     )
-
     if strategy is None:
         if is_interactive():
             logger.info("gpus={}, Interactive mode, force strategy=auto", num_gpus)
@@ -109,7 +91,7 @@ def get_trainer(
     trainer = Trainer(
         accelerator=accelerator,
         devices=num_gpus,
-        max_epochs=num_epochs,
+        max_epochs=max_epochs,
         strategy=strategy,
         callbacks=callbacks,
         log_every_n_steps=refresh_rate,

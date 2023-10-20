@@ -160,7 +160,7 @@ class BaseExp(metaclass=ABCMeta):
     def get_trainer(self):
         from ple.trainer import get_trainer
         return get_trainer(self.exp_name,
-                           num_epochs=self.max_epochs,
+                           max_epochs=self.max_epochs,
                            num_gpus=self.devices,
                            trainer_kwargs=dict(
                                accelerator=self.accelerator,

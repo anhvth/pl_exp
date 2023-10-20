@@ -6,8 +6,8 @@ from ple import *
 # ---- HYPERPARAMETERS ----
 EPOCHS = 3
 LR = 1e-4
-BZ = 1
-GRAD_ACCUMULATE_STEPS = 8
+BZ = 4
+GRAD_ACCUMULATE_STEPS = 2
 GPUS = 1
 NUM_WORKERS = 1
 STRATEGY = 'auto'
@@ -37,7 +37,7 @@ class SimpleCNN(torch.nn.Module):
             nn.ReLU(),
             torch.nn.Linear(256, 10)
         )
-        
+    
     def forward(self, x):
         x = self.layers(x.flatten(1))
         return x
@@ -47,14 +47,11 @@ model = SimpleCNN()
 # ---- LEARNING SETUP ----
 optim = lambda params: torch.optim.Adam(params, lr=LR)
 
-
-
 import pytorch_lightning as pl
 import torch.nn as nn
 import torch
 
 class CustomLitModel(AbstractLitModel):
-
     def validation_step(self, batch, batch_idx):
         pred = self(batch[0])
         loss = self.loss_fn(pred, batch[1])
@@ -69,7 +66,6 @@ class CustomLitModel(AbstractLitModel):
 # Usage
 lit = CustomLitModel(
     model=model,
-    lr=LR,
     loss_fn=nn.CrossEntropyLoss(),
     train_loader=DL_TRAIN,
     num_epochs=EPOCHS, 
@@ -79,7 +75,7 @@ lit = CustomLitModel(
 
 # ---- TRAINING ----
 trainer = get_trainer(
-    name=EXP_NAME,
+    exp_name=EXP_NAME,
     max_epochs=EPOCHS,
     num_gpus=GPUS,
     overfit_batches=0.0, # You can adjust this if needed
