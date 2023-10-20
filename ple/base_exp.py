@@ -114,8 +114,8 @@ class BaseExp(metaclass=ABCMeta):
 
         if self.schedule_type == 'cosine':
             from ple.lit_model import \
-                fn_schedule_cosine_with_warmpup_decay_timm
-            create_schedule_fn = fn_schedule_cosine_with_warmpup_decay_timm(
+                _lr_function_by_epoch
+            create_schedule_fn = _lr_function_by_epoch(
                 num_epochs=self.max_epochs,
                 num_steps_per_epoch=train_loader_len//self.devices,
                 num_epochs_per_cycle=self.max_epochs//self.num_lr_cycles,
@@ -123,8 +123,8 @@ class BaseExp(metaclass=ABCMeta):
                 cycle_decay=self.cycle_decay,
             )
         elif self.schedule_type == 'linear':
-            from ple.lit_model import fn_schedule_linear_with_warmup
-            create_schedule_fn = fn_schedule_linear_with_warmup(
+            from ple.lit_model import _lr_func_linear_warmup_by_epoch
+            create_schedule_fn = _lr_func_linear_warmup_by_epoch(
                 num_epochs=self.trainer.max_epochs,
                 num_steps_per_epoch=train_loader_len//self.devices
             )
@@ -160,8 +160,8 @@ class BaseExp(metaclass=ABCMeta):
     def get_trainer(self):
         from ple.trainer import get_trainer
         return get_trainer(self.exp_name,
-                           max_epochs=self.max_epochs,
-                           gpus=self.devices,
+                           num_epochs=self.max_epochs,
+                           num_gpus=self.devices,
                            trainer_kwargs=dict(
                                accelerator=self.accelerator,
                            ))
