@@ -1,87 +1,60 @@
-import torch
-from torchvision import datasets, transforms
-from torch.nn import functional as F
 from ple import *
+from dataclasses import asdict, dataclass, field
 
-# ---- HYPERPARAMETERS ----
-EPOCHS = 3
-LR = 1e-4
-BZ = 4
-GRAD_ACCUMULATE_STEPS = 2
-GPUS = 1
-NUM_WORKERS = 1
-STRATEGY = 'auto'
-EXP_NAME = 'exp_name'
+from torchvision import transforms, datasets
 
+
+torch.set_float32_matmul_precision("medium")
+train_config = TrainingConfig(
+    strategy="ddp",
+    val_check_interval=100,
+    monitor_metric='val_loss',
+    num_gpus=1,
+)
+loss_fn = nn.CrossEntropyLoss()
 # ---- DATA SETUP ----
-transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.5,), (0.5,))
-])
-
+transform = transforms.Compose(
+    [transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))]
+)
 # Train and Validation Split
 train_ds = datasets.MNIST(root="./data", train=True, transform=transform, download=True)
-train_length = int(0.99 * len(train_ds))
-val_length = len(train_ds) - train_length
+val_length = 16 * 100
+train_length = len(train_ds) - val_length
 train_ds, val_ds = torch.utils.data.random_split(train_ds, [train_length, val_length])
+train_ds = val_ds
+datamodule = PLDataModule(train_ds, val_ds, train_config)
 
-DL_TRAIN = torch.utils.data.DataLoader(val_ds, BZ, num_workers=NUM_WORKERS, shuffle=True)
-DL_VAL = torch.utils.data.DataLoader(val_ds, BZ, num_workers=NUM_WORKERS, shuffle=False)
 
-# ---- MODEL DEFINITION ----
 class SimpleCNN(torch.nn.Module):
     def __init__(self):
         super(SimpleCNN, self).__init__()
         self.layers = nn.Sequential(
-            torch.nn.Linear(784, 256),
-            nn.ReLU(),
-            torch.nn.Linear(256, 10)
+            torch.nn.Linear(784, 256), nn.ReLU(), torch.nn.Linear(256, 10)
         )
-    
+
     def forward(self, x):
         x = self.layers(x.flatten(1))
         return x
 
+
 model = SimpleCNN()
 
-# ---- LEARNING SETUP ----
-optim = lambda params: torch.optim.Adam(params, lr=LR)
-
-import pytorch_lightning as pl
-import torch.nn as nn
-import torch
-
-class CustomLitModel(AbstractLitModel):
-    def validation_step(self, batch, batch_idx):
-        pred = self(batch[0])
-        loss = self.loss_fn(pred, batch[1])
-        self.log('val/loss', loss, prog_bar=True)
-
-    def training_step(self, batch, batch_idx):
-        pred = self(batch[0])
-        loss = self.loss_fn(pred, batch[1])
-        self.log('train/loss', loss, prog_bar=True)
-        return loss
-
 # Usage
-lit = CustomLitModel(
+optim = torch.optim.Adam(model.parameters(), 1e-5)
+lit = AbstractLitModel(
     model=model,
-    loss_fn=nn.CrossEntropyLoss(),
-    train_loader=DL_TRAIN,
-    num_epochs=EPOCHS, 
-    grad_accumulate_steps=GRAD_ACCUMULATE_STEPS,
-    optim = torch.optim.Adam(model.parameters(), 1e-5)
-)    
+    loss_fn=loss_fn,
+    config=train_config,
+    optim=optim,
+).cpu()
 
 # ---- TRAINING ----
-trainer = get_trainer(
-    exp_name=EXP_NAME,
-    max_epochs=EPOCHS,
-    num_gpus=GPUS,
-    overfit_batches=0.0, # You can adjust this if needed
-    monitor={'metric': 'val/loss', 'mode': 'min'},
-    strategy=STRATEGY,
+trainer = get_trainer_from_config(
+    config=train_config,
 )
 
-# import ipdb; ipdb.set_trace()
-trainer.fit(lit, DL_TRAIN, DL_VAL)
+if trainer.local_rank == 0:
+    print_config(train_config)
+
+
+trainer.fit(lit, datamodule=datamodule)

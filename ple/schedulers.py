@@ -3,6 +3,10 @@ from typing import *
 import torch
 import torch.nn as nn
 import math
+
+from ple.trainer import TrainingConfig
+
+
 # from glob import glob
 class Scheduler:
     """Parameter Scheduler Base Class
@@ -355,34 +359,31 @@ def _lr_function_by_step(
     return get_lr
 
 
-
 def get_cyclic_cosine_lr(
-    train_dataloader,
-    num_epochs,
-    grad_accumulate_steps,
-    num_cycles=2,
-    warm_up_steps=0.1,
-    cycle_decay=0.5,
-    min_lr=0.1,
-    init_lr=0.4,
-    num_gpus=1,
-    strategy="ddp",
+    training_config: TrainingConfig,
 ):
-    num_samples = len(train_dataloader.dataset)
-    batch_size = train_dataloader.batch_size
-    if strategy == "ddp":
-        global_batch_size = batch_size * num_gpus * grad_accumulate_steps
-    elif num_gpus == 1:
-        global_batch_size = batch_size * grad_accumulate_steps
+    if "ddp" in training_config.strategy:
+        global_batch_size = (
+            training_config.batch_size
+            * training_config.num_gpus
+            * training_config.grad_accumulate_steps
+        )
+    elif training_config.num_gpus == 1:
+        global_batch_size = (
+            training_config.batch_size * training_config.grad_accumulate_steps
+        )
+    else:
+        raise NotImplementedError(training_config.strategy, training_config.num_gpus)
 
-    total_steps = round(num_samples*num_epochs / global_batch_size)
+    total_steps = round(
+        training_config.train_data_len * training_config.num_epochs / global_batch_size
+    )
     lr_fn = _lr_function_by_step(
         total_steps,
-        num_cycles,
-        warm_up_steps,
-        init_lr=init_lr,
-        min_lr=min_lr,
-        cycle_decay=cycle_decay,
+        training_config.sched_num_cycle,
+        training_config.sched_warm_up_step,
+        init_lr=training_config.sched_init_lr,
+        min_lr=training_config.sched_min_lr,
+        cycle_decay=training_config.sched_cycle_decay,
     )
-
     return lr_fn
