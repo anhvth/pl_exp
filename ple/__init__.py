@@ -15,6 +15,6 @@ from torch.optim.lr_scheduler import LambdaLR
 
 from ple.lit_model import AbstractLitModel, PLDataModule
 from ple.schedulers import get_cyclic_cosine_lr
-from ple.trainer import TrainingConfig, get_trainer_from_config
-from ple.trainer import print_config
+from ple.trainer import TrainingConfig, get_trainer_from_config, print_config
+
 from .utils import load_ckpt_inner

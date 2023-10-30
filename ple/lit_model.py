@@ -65,52 +65,25 @@ class AbstractLitModel(LightningModule):
         self.loss_fn = loss_fn
         self.optim = optim
     
-    # def __getattr__(self, name: str) -> Any:
-    #     try:
-    #         return super().__getattr__(name)
-    #     except AttributeError:
-    #         if hasattr(self, "config") and hasattr(self.config, name):
-    #             return getattr(self.config, name)
-    #         raise
-
-    def forward(self, x):
-        return self.model(x)
-
-    def configure_optimizers(self):
-        optimizer = self.optim
-
-        if not self.config.train_data_len is not None:
-            logger.info("Not enough info to initialize scheduler")
-            raise ValueError(
-                "Incomplete information for scheduler initialization")
-
-        lr_func_by_step = get_cyclic_cosine_lr(self.config)
-        scheduler = {
-            "scheduler": LambdaLR(optimizer, lr_func_by_step, -1),
-            "interval": "step",  # step-based update
-            "frequency": self.config.grad_accumulate_steps,
-        }
-
-        return [optimizer], [scheduler]
-
-    def compute_predictions(self, logits):
-        return logits.softmax(1).argmax(1)
-
-    def log_metrics(self, metrics, prog_bar=True, on_epoch=True):
-        for key, value in metrics.items():
-            self.log(key,
-                     value,
-                     prog_bar=prog_bar,
-                     rank_zero_only=True,
-                     on_epoch=on_epoch)
+    def forward(self, batch):
+        x, y = batch
+        return self.model(**x).logits
 
     def validation_step(self, batch, batch_idx):
-        pred = self(batch[0])
-        loss = self.loss_fn(pred, batch[1])
+        x, y = batch
+        pred = self(batch)
+        loss = self.loss_fn(pred, y)
+        # Calculate accuracy and F1 score
+        acc = self.accuracy(pred.argmax(dim=1), y)
+        f1 = self.f1(pred.argmax(dim=1), y)
+
         self.log("val_loss", loss, prog_bar=True, sync_dist=True)
+        self.log("val_acc", acc, prog_bar=True, sync_dist=True)
+        self.log("val_f1", f1, prog_bar=True, sync_dist=True)
 
     def training_step(self, batch, batch_idx):
-        pred = self(batch[0])
-        loss = self.loss_fn(pred, batch[1])
+        x, y = batch
+        pred = self(batch)
+        loss = self.loss_fn(pred, y)
         self.log("train_loss", loss, prog_bar=True, on_step=True)
         return loss
