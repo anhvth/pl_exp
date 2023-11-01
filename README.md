@@ -1,3 +1,4 @@
+```python
 from ple import *
 from torchvision import transforms, datasets
 import torch.nn.functional as F
@@ -56,3 +57,4 @@ if __name__ == '__main__':
     train_ds, val_ds = get_mnist_data()
     model = SimpleCNN()
     train(train_ds, val_ds, model, config)
+```

@@ -54,7 +54,6 @@ class AbstractLitModel(LightningModule):
     def __init__(
         self,
         model: Module,
-        optim: Optimizer,
         loss_fn: Callable,
         config: TrainingConfig,
     ):
@@ -62,14 +61,27 @@ class AbstractLitModel(LightningModule):
         self.model = model
         self.config = config
         self.loss_fn = loss_fn
-        self.optim = optim
 
     def set_trace(self):
         if self.local_rank == 0:
             return ipdb.set_trace
 
+
     def configure_optimizers(self):
-        return self.optim
+        # Define the optimizer
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.config.lr)
+        
+        # Get the cyclic cosine learning rate function
+        lr_lambda = get_cyclic_cosine_lr(self.config)
+        
+        # Define the learning rate scheduler
+        scheduler = {
+            'scheduler': LambdaLR(optimizer, lr_lambda=lr_lambda),
+            'interval': 'step',  # or 'epoch' depending on your use case
+            'frequency': self.config.grad_accumulate_steps
+        }
+        
+        return [optimizer], [scheduler]
 
     def forward(self, batch):
         x, y = batch
