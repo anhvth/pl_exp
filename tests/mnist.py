@@ -7,10 +7,10 @@ def get_config():
     return TrainingConfig(
         strategy="ddp",
         exp_name="mnist",
-        val_check_interval=100,
+        val_check_interval=None,
         monitor_metric="val_loss",
-        batch_size=2,
-        num_gpus=2,
+        batch_size=32,
+        num_gpus=8,
         ckpt_save_top_k=1,
     )
 
@@ -20,9 +20,7 @@ def get_mnist_data():
         [transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))]
     )
     train_ds = datasets.MNIST(root="./data", train=True, transform=transform, download=True)
-    val_length = 16 * 100
-    train_length = len(train_ds) - val_length
-    train_ds, val_ds = torch.utils.data.random_split(train_ds, [train_length, val_length])
+    val_ds = datasets.MNIST(root="./data", train=False, transform=transform, download=True)
     return train_ds, val_ds
 
 # ---- MODEL SETUP ----

@@ -194,11 +194,11 @@ class ClassificationLitModel(AbstractLitModel):
             accuracy = self.report['accuracy']  # optional, as this is just the total count
 
             # Log the metrics to TensorBoard
-            self.log("val/macro_precision", macro_precision, on_epoch=True, logger=True)
-            self.log("val/macro_recall", macro_recall, on_epoch=True, logger=True)
-            self.log("val/macro_f1_score", macro_f1_score, on_epoch=True, logger=True)
-            self.log("val/macro_support", macro_support, on_epoch=True, logger=True)  # optional
-            self.log("val/accuracy", accuracy, on_epoch=True, logger=True) 
+            self.log("val/macro_precision", macro_precision, on_epoch=True, logger=True, sync_dist=False)
+            self.log("val/macro_recall", macro_recall, on_epoch=True, logger=True, sync_dist=False)
+            self.log("val/macro_f1_score", macro_f1_score, on_epoch=True, logger=True, sync_dist=False)
+            self.log("val/macro_support", macro_support, on_epoch=True, logger=True, sync_dist=False)  # optional
+            self.log("val/accuracy", accuracy, on_epoch=True, logger=True, sync_dist=False) 
 
             
         self.all_logits.clear()
