@@ -13,7 +13,7 @@ from torch.nn import Module
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LambdaLR
 
-from ple.lit_model import AbstractLitModel, PLDataModule
+from ple.lit_model import AbstractLitModel, PLDataModule, ClassificationLitModel
 from ple.schedulers import get_cyclic_cosine_lr
 from ple.trainer import TrainingConfig, get_trainer_from_config, print_config
 

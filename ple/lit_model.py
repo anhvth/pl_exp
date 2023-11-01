@@ -63,10 +63,11 @@ class AbstractLitModel(LightningModule):
         self.config = config
         self.loss_fn = loss_fn
         self.optim = optim
+
     def set_trace(self):
         if self.local_rank == 0:
-            
             return ipdb.set_trace
+
     def configure_optimizers(self):
         return self.optim
 
@@ -76,15 +77,14 @@ class AbstractLitModel(LightningModule):
             try:
                 return self.model(**x).logits
             except Exception as e:
-                logger.error('I thought the input was hf model but seemslike its not')
-                raise NotImplementedError(f'{e}, {type(e)=}')
+                logger.error("I thought the input was hf model but seemslike its not")
+                raise NotImplementedError(f"{e}, {type(e)=}")
         else:
             return self.model(x)
 
     def validation_step(self, batch, batch_idx):
-        self.all_logits.append(self(batch))# Get logits
-        self.all_targets.append(batch[1])# Git y
-        
+        self.all_logits.append(self(batch))  # Get logits
+        self.all_targets.append(batch[1])  # Git y
 
     def training_step(self, batch, batch_idx):
         x, y = batch
@@ -111,7 +111,7 @@ class AbstractLitModel(LightningModule):
         # Get the local data based on the given name
         local_data = getattr(self, name)
         if len(local_data) == 0:
-            return 
+            return
 
         # Convert list of tensors to single tensor (if it's a list)
         if isinstance(local_data, list):
@@ -135,19 +135,17 @@ class AbstractLitModel(LightningModule):
         self.all_logits = []
         self.all_targets = []
         return super().on_validation_epoch_start()
-    
-    
-class LitClassification(AbstractLitModel):
-    
+
+
+class ClassificationLitModel(AbstractLitModel):
     def on_validation_epoch_end(self):
         gathered_all_logits = self.gather_dpp_output("all_logits")
         gathered_all_targets = self.gather_dpp_output("all_targets")
         if gathered_all_logits is None:
-            logger.warning('gathered_all_logits is None!')
-            return 
-        
+            logger.warning("gathered_all_logits is None!")
+            return
+
         if gathered_all_targets is None:
-            # Optional: Print a warning or raise an exception
             logger.warning("gathered_all_targets is None!")
             return
 
@@ -162,9 +160,13 @@ class LitClassification(AbstractLitModel):
                 zero_division=0,
                 output_dict=False,
             )
-            print(report)
-            self.logger.experiment.add_text('Classification_Report', report, self.current_epoch)
-            import ipdb; ipdb.set_trace()
+            logger.info(
+                f"Epoch {self.current_epoch}| Global step: {self.global_step}\n"
+                + report
+            )
+            self.logger.experiment.add_text(
+                "Classification_Report", report, self.current_epoch
+            )
 
         self.all_logits.clear()
         self.all_targets.clear()

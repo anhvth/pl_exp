@@ -72,7 +72,7 @@ class TrainingConfig:
     # Checkpoint parameters
     val_check_interval: int = None
     ckpt_save_last: bool = True
-    ckpt_save_top_k: int = -1
+    ckpt_save_top_k: int = 1
     ckpt_every_n_epochs: int = 1
     ckpt_every_n_train_steps: int = None
 
@@ -83,7 +83,7 @@ class TrainingConfig:
         self.global_batch_size = (
             self.num_gpus * self.batch_size * self.grad_accumulate_steps
         )
-        # import ipdb
+        
         if is_interactive():
             logger.info('Interactive mode change to ddp notebook')
             self.strategy = 'ddp_notebook'
@@ -100,6 +100,7 @@ class TrainingConfig:
 
 
 from dataclasses import asdict
+from .logger import setup_logger
 
 
 def get_trainer_from_config(config: TrainingConfig, **kwargs) -> Trainer:
@@ -167,6 +168,7 @@ def get_trainer_from_config(config: TrainingConfig, **kwargs) -> Trainer:
     else:
         strategy = config.strategy
     # Convert the dataclass to a dictionary and unpack its values into the Trainer constructor.
+
     trainer = Trainer(
         accelerator=config.accelerator,
         devices=config.num_gpus,
@@ -177,6 +179,9 @@ def get_trainer_from_config(config: TrainingConfig, **kwargs) -> Trainer:
         logger=plt_logger,
         precision=config.precision,
     )
+    
+    # Setup loguru logger
+    setup_logger(trainer.log_dir, trainer.local_rank)
     return trainer
 
 
@@ -233,7 +238,6 @@ def train(
         trainer.fit(model, data)
     except Exception as e:
         import traceback
-
         traceback.print_exc()
     finally:
         if get_rank() == 0:

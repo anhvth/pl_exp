@@ -7,9 +7,11 @@ from torchvision import transforms, datasets
 torch.set_float32_matmul_precision("medium")
 train_config = TrainingConfig(
     strategy="ddp",
+    exp_name="mnist",
     val_check_interval=100,
     monitor_metric="val_loss",
-    num_gpus=1,
+    num_gpus=2,
+    ckpt_save_top_k=1,
 )
 loss_fn = nn.CrossEntropyLoss()
 # ---- DATA SETUP ----
@@ -40,8 +42,8 @@ class SimpleCNN(torch.nn.Module):
 model = SimpleCNN()
 
 # Usage
-optim = torch.optim.Adam(model.parameters(), 1e-5)
-lit = AbstractLitModel(
+optim = torch.optim.Adam(model.parameters(), train_config.lr)
+lit = ClassificationLitModel(
     model=model,
     loss_fn=loss_fn,
     config=train_config,
