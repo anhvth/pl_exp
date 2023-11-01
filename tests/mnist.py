@@ -8,7 +8,7 @@ torch.set_float32_matmul_precision("medium")
 train_config = TrainingConfig(
     strategy="ddp",
     val_check_interval=100,
-    monitor_metric='val_loss',
+    monitor_metric="val_loss",
     num_gpus=1,
 )
 loss_fn = nn.CrossEntropyLoss()

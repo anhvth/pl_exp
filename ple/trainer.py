@@ -18,11 +18,17 @@ import torch
 from loguru import logger
 from pytorch_lightning import Trainer
 
+
+from dataclasses import dataclass
+from typing import Dict, Union, Any
 from .custom_callbacks import *
 
 
 def is_interactive():
-    return "get_ipython" in dir()
+    import sys
+    # return "get_ipython" in dir()
+    return hasattr(sys, 'ps1')
+
 
 
 def print_config(config):
@@ -33,13 +39,6 @@ def print_config(config):
     logger.info("\n" + grid)
 
 
-from dataclasses import dataclass
-from typing import Dict, Union, Any
-
-from dataclasses import dataclass
-from typing import Dict, Union, Any
-
-
 @dataclass
 class TrainingConfig:
     # Training parameters
@@ -48,7 +47,7 @@ class TrainingConfig:
     batch_size: int = 4
     grad_accumulate_steps: int = 2
     num_gpus: int = 1
-    strategy: str = "ddp"
+    strategy: str = "ddp_notebook" if is_interactive() else "ddp"
     overfit_batches: float = 0.0
     train_data_len: int = None
     precision: str = "16-mixed"
@@ -84,7 +83,10 @@ class TrainingConfig:
         self.global_batch_size = (
             self.num_gpus * self.batch_size * self.grad_accumulate_steps
         )
-
+        # import ipdb
+        if is_interactive():
+            logger.info('Interactive mode change to ddp notebook')
+            self.strategy = 'ddp_notebook'
         # Override ckpt_every_n_epochs with val_check_interval if the latter is not None
         if (
             self.ckpt_every_n_train_steps is not None
