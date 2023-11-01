@@ -10,7 +10,7 @@ train_config = TrainingConfig(
     exp_name="mnist",
     val_check_interval=100,
     monitor_metric="val_loss",
-    num_gpus=2,
+    num_gpus=1,
     ckpt_save_top_k=1,
 )
 loss_fn = nn.CrossEntropyLoss()

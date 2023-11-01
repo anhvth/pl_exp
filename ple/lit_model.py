@@ -167,6 +167,27 @@ class ClassificationLitModel(AbstractLitModel):
             self.logger.experiment.add_text(
                 "Classification_Report", report, self.current_epoch
             )
+            #====== Report dict
+            self.report = classification_report(
+                            gt_np,
+                            pred_np,
+                            zero_division=0,
+                            output_dict=True,
+                        )
+            # Extract macro metrics
+            macro_precision = self.report['macro avg']['precision']
+            macro_recall = self.report['macro avg']['recall']
+            macro_f1_score = self.report['macro avg']['f1-score']
+            macro_support = self.report['macro avg']['support']  # optional, as this is just the total count
+            accuracy = self.report['accuracy']  # optional, as this is just the total count
 
+            # Log the metrics to TensorBoard
+            self.log("val/macro_precision", macro_precision, on_epoch=True, logger=True)
+            self.log("val/macro_recall", macro_recall, on_epoch=True, logger=True)
+            self.log("val/macro_f1_score", macro_f1_score, on_epoch=True, logger=True)
+            self.log("val/macro_support", macro_support, on_epoch=True, logger=True)  # optional
+            self.log("val/accuracy", accuracy, on_epoch=True, logger=True) 
+
+            
         self.all_logits.clear()
         self.all_targets.clear()
