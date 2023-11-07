@@ -11,3 +11,15 @@ def load_ckpt_inner(model, ckpt_path, strict=False, infer_mode=True):
     if infer_mode:
         model.requires_grad_(False).eval()
     return res
+
+
+
+def to_device(data, device):
+    if isinstance(data, torch.Tensor):
+        return data.to(device)
+    elif isinstance(data, dict):
+        return {k: to_device(v, device) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [to_device(v, device) for v in data]
+    else:
+        return data.to(device)

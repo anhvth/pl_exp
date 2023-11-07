@@ -47,7 +47,7 @@ class TrainingConfig:
     batch_size: int = 4
     grad_accumulate_steps: int = 2
     num_gpus: int = 1
-    strategy: str = "ddp_notebook" if is_interactive() else "ddp"
+    strategy: str = "ddp"
     overfit_batches: float = 0.0
     train_data_len: int = None
     precision: str = "16-mixed"
@@ -85,8 +85,8 @@ class TrainingConfig:
         )
         
         if is_interactive():
-            logger.info('Interactive mode change to ddp notebook')
-            self.strategy = 'ddp_notebook'
+            logger.info('Interactive mode change to auto')
+            self.strategy = 'auto'
         # Override ckpt_every_n_epochs with val_check_interval if the latter is not None
         if (
             self.ckpt_every_n_train_steps is not None
@@ -181,7 +181,8 @@ def get_trainer_from_config(config: TrainingConfig, **kwargs) -> Trainer:
     )
     
     # Setup loguru logger
-    setup_logger(trainer.log_dir, trainer.local_rank)
+    if not is_interactive():
+        setup_logger(trainer.log_dir, trainer.local_rank)
     return trainer
 
 

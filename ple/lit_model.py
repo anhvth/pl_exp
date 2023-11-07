@@ -89,7 +89,10 @@ class AbstractLitModel(LightningModule):
             try:
                 return self.model(**x).logits
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 logger.error("I thought the input was hf model but seemslike its not")
+                import ipdb; ipdb.set_trace()
                 raise NotImplementedError(f"{e}, {type(e)=}")
         else:
             return self.model(x)
@@ -100,9 +103,17 @@ class AbstractLitModel(LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        pred = self(batch)
-        loss = self.loss_fn(pred, y)
-        self.log("train_loss", loss, prog_bar=True, on_step=True, on_epoch=True)
+        try:
+            # xshape = f'{x.shape=}'
+            # yshape = f'{y.shape=}'
+            pred = self(batch)
+            loss = self.loss_fn(pred, y)
+            self.log("train_loss", loss, prog_bar=True, on_step=True, on_epoch=True)
+        except Exception as e:
+            print(e)
+            import ipdb; ipdb.set_trace()
+            # logger.error(xshape)
+            # logger.error(yshape)
         return loss
 
     def gather_dpp_output(self, name):
@@ -130,7 +141,11 @@ class AbstractLitModel(LightningModule):
             local_data = torch.cat(local_data)
 
         # Get world size for distributed processing
-        world_size = torch.distributed.get_world_size()
+        try:
+            world_size = torch.distributed.get_world_size()
+        except:
+            logger.info('Not ddp mode return local data')
+            return local_data
 
         # Create placeholders for all processes
         gathered_data = [torch.zeros_like(local_data) for _ in range(world_size)]
